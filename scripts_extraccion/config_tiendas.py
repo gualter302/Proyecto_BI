@@ -2,6 +2,12 @@
 # Categorias: CPU | GPU | RAM | SSD | Monitor | Periferico
 # Configuracion inicial: 4 tiendas internacionales de distintas regiones/monedas.
 # Los selectores CSS pueden necesitar ajuste si la tienda cambia su HTML.
+#
+# [!] HALLAZGO (verificacion con Playwright):
+#     - PCComponentes y Scan devuelven HTTP 403 (proteccion anti-bot).
+#     - CanadaComputers da timeout de conexion.
+#     - Solo Newegg responde (200). Con una sola tienda no hay comparacion.
+#     => Se evaluara migrar a tiendas ECUATORIANAS (ver commit siguiente).
 
 CONFIGURACIONES = [
     {
