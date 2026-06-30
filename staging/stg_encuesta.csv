@@ -1,0 +1,121 @@
+﻿id_anonimo,fecha_respuesta,ciudad,rango_edad,ocupacion,categoria_interes,presupuesto_usd,marca_preferida,canal_preferido,tienda_habitual,frecuencia_compra_anual,importancia_precio
+ENC-0001,2026-06-21 18:29,Quito,25-34,Docente,CPU,671.78,Intel,Ambos,TecnoGame,6+,4
+ENC-0002,2026-06-16 21:29,Machala,18-24,Disenador,GPU,304.94,NVIDIA,Ambos,NomadaWare,6+,3
+ENC-0003,2026-06-28 14:29,Quito,35-44,Estudiante,RAM,249.93,G.Skill,Tienda fisica,NomadaWare,1-2,5
+ENC-0004,2026-06-21 16:29,Loja,45+,Estudiante,RAM,128.67,TeamGroup,Ambos,Otra,6+,4
+ENC-0005,2026-06-25 17:29,Guayaquil,25-34,Profesional TI,SSD,170.93,Samsung,Ambos,TecnoGame,6+,1
+ENC-0006,2026-06-23 09:29,Quito,45+,Otro,GPU,1304.52,AMD,Ambos,TecnoGame,3-5,5
+ENC-0007,2026-06-28 22:29,Santa Elena,45+,Disenador,Monitor,336.45500000000004,Samsung,Tienda fisica,Otra,3-5,1
+ENC-0008,2026-06-23 18:29,Ambato,25-34,Gamer,Monitor,657.64,Acer,Tienda fisica,TecnoGame,3-5,4
+ENC-0009,2026-06-21 16:29,Quito,45+,Otro,RAM,232.53,G.Skill,Tienda fisica,Tecnosmart,3-5,4
+ENC-0010,2026-06-21 05:29,Loja,25-34,Disenador,SSD,86.57,Samsung,Online,Computron,3-5,5
+ENC-0011,2026-06-28 08:29,Guayaquil,35-44,Otro,Monitor,263.75,Asus,Online,Computron,3-5,5
+ENC-0012,2026-06-28 01:29,Manta,45+,Docente,SSD,283.44,Kingston,Ambos,CompuGamer,6+,3
+ENC-0013,2026-06-28 20:29,Loja,45+,Profesional TI,GPU,597.81,Intel,Online,NomadaWare,1-2,1
+ENC-0014,2026-06-26 13:29,Guayaquil,18-24,Docente,RAM,236.25,TeamGroup,Tienda fisica,CompuGamer,3-5,4
+ENC-0015,2026-06-25 21:29,Cuenca,25-34,Disenador,SSD,248.31,WD,Tienda fisica,TecnoGame,1-2,1
+ENC-0016,2026-06-30 07:29,Guayaquil,45+,Otro,Periferico,23.37,Razer,Tienda fisica,CompuGamer,6+,1
+ENC-0017,2026-06-30 06:29,Cuenca,45+,Gamer,Monitor,213.03,Acer,Ambos,NomadaWare,1-2,4
+ENC-0018,2026-06-23 17:29,Loja,35-44,Disenador,RAM,249.84,Kingston,Tienda fisica,TecnoGame,3-5,4
+ENC-0019,2026-06-29 05:29,Manta,18-24,Estudiante,RAM,218.05,TeamGroup,Ambos,MTEC,3-5,5
+ENC-0020,2026-06-18 02:29,Cuenca,35-44,Docente,Periferico,80.11,Razer,Online,TecnoGame,6+,3
+ENC-0021,2026-06-25 11:29,Cuenca,18-24,Gamer,GPU,931.68,NVIDIA,Tienda fisica,Tecnosmart,1-2,1
+ENC-0022,2026-06-26 22:29,No especificada,35-44,Docente,GPU,338.22,NVIDIA,Tienda fisica,MTEC,1-2,3
+ENC-0023,2026-06-22 02:29,Manta,18-24,Gamer,RAM,52.04,Corsair,Online,CompuGamer,6+,5
+ENC-0024,2026-06-28 16:29,Guayaquil,45+,Gamer,RAM,167.52,Kingston,Ambos,NomadaWare,3-5,1
+ENC-0025,2026-06-30 10:29,Ambato,18-24,Otro,Periferico,86.97,Redragon,Online,MTEC,6+,3
+ENC-0026,2026-06-20 15:29,Guayaquil,35-44,Profesional TI,CPU,304.95,AMD,Ambos,Computron,1-2,5
+ENC-0027,2026-06-21 21:29,Machala,18-24,Disenador,Monitor,495.78,Samsung,Tienda fisica,NomadaWare,3-5,4
+ENC-0028,2026-06-28 06:29,Guayaquil,45+,Gamer,GPU,438.51,NVIDIA,Online,Computron,1-2,3
+ENC-0029,2026-06-18 22:29,Cuenca,18-24,Otro,RAM,167.655,G.Skill,Tienda fisica,CompuGamer,6+,3
+ENC-0030,2026-06-19 17:29,Manta,25-34,Otro,Periferico,25.78,Redragon,Ambos,MTEC,1-2,5
+ENC-0031,2026-06-21 13:29,Santa Elena,45+,Otro,GPU,797.05,Intel,Tienda fisica,Tecnosmart,1-2,4
+ENC-0032,2026-06-29 18:29,Guayaquil,25-34,Estudiante,RAM,187.49,G.Skill,Tienda fisica,TecnoGame,6+,3
+ENC-0033,2026-06-24 08:29,Machala,18-24,Disenador,CPU,612.89,Intel,Ambos,TecnoGame,6+,2
+ENC-0034,2026-06-27 14:29,Machala,35-44,Estudiante,GPU,633.69,Intel,Ambos,CompuGamer,1-2,2
+ENC-0035,2026-06-21 06:29,No especificada,18-24,Docente,RAM,244.28,TeamGroup,Tienda fisica,MTEC,6+,2
+ENC-0036,2026-06-24 06:29,Quito,18-24,Gamer,RAM,74.43,Corsair,Tienda fisica,MTEC,1-2,5
+ENC-0037,2026-06-17 12:29,Quito,45+,Gamer,GPU,829.93,Intel,Tienda fisica,CompuGamer,1-2,3
+ENC-0038,2026-06-24 09:29,Santa Elena,35-44,Estudiante,Monitor,600.61,LG,Online,Otra,3-5,3
+ENC-0039,2026-06-21 15:29,Ambato,35-44,Otro,GPU,858.15,Intel,Tienda fisica,NomadaWare,3-5,2
+ENC-0040,2026-06-30 13:29,Ambato,45+,Docente,Periferico,155.38,Redragon,Online,Tecnosmart,3-5,5
+ENC-0041,2026-06-21 05:29,Santa Elena,35-44,Profesional TI,RAM,107.21,G.Skill,Online,MTEC,1-2,5
+ENC-0042,2026-06-23 22:29,Guayaquil,35-44,Otro,Monitor,352.72,Acer,Tienda fisica,Computron,6+,4
+ENC-0043,2026-06-28 19:29,Loja,35-44,Otro,Periferico,92.13,HyperX,Online,NomadaWare,6+,2
+ENC-0044,2026-06-18 12:29,Loja,45+,Disenador,RAM,161.58,G.Skill,Online,Computron,1-2,1
+ENC-0045,2026-06-16 08:29,Machala,35-44,Estudiante,RAM,206.06,Kingston,Ambos,Otra,1-2,1
+ENC-0046,2026-06-19 21:29,Machala,18-24,Docente,SSD,213.38,Crucial,Ambos,TecnoGame,6+,5
+ENC-0047,2026-06-22 03:29,Manta,45+,Otro,RAM,78.9,G.Skill,Tienda fisica,MTEC,3-5,5
+ENC-0048,2026-06-29 10:29,Santa Elena,25-34,Estudiante,RAM,47.71,TeamGroup,Tienda fisica,MTEC,3-5,2
+ENC-0049,2026-06-22 11:29,Guayaquil,45+,Estudiante,Periferico,55.38,HyperX,Tienda fisica,TecnoGame,1-2,5
+ENC-0050,2026-06-21 23:29,Cuenca,18-24,Docente,SSD,125.0,Kingston,Tienda fisica,Otra,6+,5
+ENC-0051,2026-06-19 02:29,Manta,45+,Docente,Monitor,389.01,Samsung,Ambos,Tecnosmart,3-5,4
+ENC-0052,2026-06-21 22:29,Manta,25-34,Docente,RAM,122.32,Kingston,Ambos,Tecnosmart,1-2,5
+ENC-0053,2026-06-20 11:29,Cuenca,25-34,Gamer,CPU,665.76,Intel,Online,NomadaWare,1-2,2
+ENC-0054,2026-06-18 15:29,Santa Elena,18-24,Gamer,Periferico,133.63,Razer,Ambos,MTEC,6+,1
+ENC-0055,2026-06-30 12:29,No especificada,45+,Estudiante,GPU,389.34,NVIDIA,Online,MTEC,6+,3
+ENC-0056,2026-06-19 04:29,Loja,25-34,Profesional TI,Monitor,365.25,Samsung,Online,CompuGamer,3-5,2
+ENC-0057,2026-06-27 15:29,Ambato,25-34,Gamer,SSD,156.74,Crucial,Ambos,TecnoGame,3-5,1
+ENC-0058,2026-06-17 04:29,Cuenca,18-24,Profesional TI,GPU,715.37,NVIDIA,Ambos,NomadaWare,1-2,4
+ENC-0059,2026-06-30 22:29,Machala,35-44,Disenador,Periferico,161.05,Logitech,Tienda fisica,TecnoGame,3-5,3
+ENC-0060,2026-06-17 06:29,Ambato,45+,Disenador,GPU,927.54,Intel,Ambos,TecnoGame,1-2,5
+ENC-0061,2026-06-17 16:29,Quito,35-44,Gamer,Periferico,101.68,Logitech,Online,TecnoGame,1-2,1
+ENC-0062,2026-06-22 22:29,Santa Elena,45+,Docente,CPU,584.11,AMD,Online,MTEC,1-2,1
+ENC-0063,2026-06-29 10:29,Guayaquil,18-24,Docente,Monitor,130.58,LG,Ambos,Otra,3-5,2
+ENC-0064,2026-06-27 16:29,Loja,25-34,Docente,RAM,185.0,G.Skill,Tienda fisica,Computron,3-5,2
+ENC-0065,2026-06-25 17:29,Santa Elena,18-24,Disenador,CPU,462.52,AMD,Tienda fisica,CompuGamer,1-2,5
+ENC-0066,2026-06-29 18:29,Loja,18-24,Gamer,GPU,608.04,Intel,Ambos,Tecnosmart,6+,1
+ENC-0067,2026-06-17 19:29,Loja,18-24,Estudiante,Monitor,336.45500000000004,Acer,Tienda fisica,Computron,1-2,2
+ENC-0068,2026-06-24 10:29,Quito,35-44,Profesional TI,GPU,1385.82,NVIDIA,Online,CompuGamer,6+,5
+ENC-0069,2026-06-16 13:29,Santa Elena,18-24,Profesional TI,Periferico,192.58,Redragon,Online,MTEC,1-2,2
+ENC-0070,2026-06-20 21:29,Santa Elena,35-44,Estudiante,CPU,494.88,AMD,Ambos,CompuGamer,6+,5
+ENC-0071,2026-06-24 13:29,Loja,45+,Estudiante,CPU,252.41,AMD,Online,Computron,3-5,4
+ENC-0072,2026-06-18 07:29,Manta,35-44,Disenador,Monitor,257.39,Asus,Ambos,CompuGamer,1-2,4
+ENC-0073,2026-06-28 06:29,Manta,45+,Otro,Periferico,196.48,Razer,Ambos,Otra,3-5,2
+ENC-0074,2026-06-29 14:29,Santa Elena,45+,Otro,CPU,582.7950000000001,Intel,Ambos,MTEC,1-2,5
+ENC-0075,2026-06-22 09:29,Cuenca,35-44,Otro,CPU,667.16,AMD,Online,MTEC,6+,2
+ENC-0076,2026-06-26 17:29,Cuenca,45+,Estudiante,GPU,1175.64,NVIDIA,Online,Computron,6+,5
+ENC-0077,2026-06-16 16:29,Cuenca,45+,Otro,RAM,167.79,Corsair,Tienda fisica,TecnoGame,1-2,1
+ENC-0078,2026-06-29 14:29,Santa Elena,45+,Otro,CPU,672.89,Intel,Tienda fisica,NomadaWare,6+,5
+ENC-0079,2026-06-29 07:29,Guayaquil,25-34,Profesional TI,RAM,61.35,G.Skill,Ambos,Otra,3-5,2
+ENC-0080,2026-06-28 05:29,Cuenca,35-44,Otro,GPU,498.8,Intel,Tienda fisica,Tecnosmart,6+,5
+ENC-0081,2026-06-27 10:29,Santa Elena,25-34,Profesional TI,SSD,127.12,WD,Online,CompuGamer,6+,2
+ENC-0082,2026-06-25 06:29,Loja,45+,Otro,Periferico,97.29,Logitech,Ambos,MTEC,6+,1
+ENC-0083,2026-06-20 15:29,Machala,35-44,Gamer,Monitor,250.98,Acer,Ambos,Tecnosmart,1-2,4
+ENC-0084,2026-06-29 09:29,Loja,35-44,Otro,RAM,157.43,Corsair,Online,Tecnosmart,1-2,2
+ENC-0085,2026-06-22 18:29,Guayaquil,18-24,Estudiante,GPU,446.36,NVIDIA,Online,NomadaWare,1-2,4
+ENC-0086,2026-06-17 15:29,Machala,18-24,Estudiante,Periferico,58.48,Logitech,Tienda fisica,CompuGamer,1-2,4
+ENC-0087,2026-06-29 08:29,Santa Elena,35-44,Docente,CPU,627.02,AMD,Online,Computron,3-5,2
+ENC-0088,2026-06-30 19:29,Loja,25-34,Estudiante,CPU,581.48,AMD,Ambos,NomadaWare,3-5,1
+ENC-0089,2026-06-22 01:29,Guayaquil,45+,Profesional TI,SSD,61.11,Crucial,Ambos,Computron,3-5,5
+ENC-0090,2026-06-18 02:29,Machala,35-44,Disenador,RAM,219.88,Corsair,Ambos,Tecnosmart,3-5,1
+ENC-0091,2026-06-28 21:29,Loja,35-44,Profesional TI,Monitor,273.24,Samsung,Ambos,NomadaWare,3-5,1
+ENC-0092,2026-06-20 15:29,Machala,25-34,Otro,SSD,230.69,Crucial,Online,MTEC,6+,3
+ENC-0093,2026-06-19 02:29,Ambato,35-44,Otro,Monitor,652.2,LG,Ambos,MTEC,3-5,4
+ENC-0094,2026-06-17 13:29,Loja,45+,Docente,Periferico,175.83,HyperX,Ambos,NomadaWare,3-5,1
+ENC-0095,2026-06-28 10:29,Guayaquil,35-44,Disenador,RAM,204.29,TeamGroup,Online,TecnoGame,1-2,3
+ENC-0096,2026-06-17 12:29,Loja,35-44,Otro,CPU,370.42,Intel,Online,Tecnosmart,1-2,1
+ENC-0097,2026-06-21 21:29,Quito,18-24,Gamer,Periferico,114.85,Razer,Online,Otra,3-5,2
+ENC-0098,2026-06-28 04:29,Loja,18-24,Profesional TI,CPU,699.34,Intel,Ambos,CompuGamer,1-2,3
+ENC-0099,2026-06-29 16:29,Guayaquil,45+,Gamer,Periferico,50.18,Razer,Tienda fisica,CompuGamer,6+,2
+ENC-0100,2026-06-23 20:29,Santa Elena,45+,Otro,CPU,359.3,AMD,Online,MTEC,1-2,2
+ENC-0101,2026-06-23 18:29,Manta,35-44,Profesional TI,Periferico,129.96,HyperX,Online,Computron,1-2,4
+ENC-0102,2026-06-29 02:29,Quito,35-44,Docente,CPU,332.89,AMD,Online,MTEC,3-5,1
+ENC-0103,2026-06-18 00:29,Ambato,25-34,Profesional TI,Monitor,250.59,Samsung,Online,TecnoGame,3-5,1
+ENC-0104,2026-06-21 08:29,Cuenca,35-44,Disenador,SSD,84.73,Samsung,Ambos,TecnoGame,1-2,5
+ENC-0105,2026-06-16 19:29,Manta,35-44,Disenador,Monitor,320.19,LG,Tienda fisica,Tecnosmart,3-5,4
+ENC-0106,2026-06-17 08:29,Machala,45+,Estudiante,Periferico,71.78,Redragon,Tienda fisica,MTEC,3-5,2
+ENC-0107,2026-06-30 04:29,Loja,18-24,Profesional TI,CPU,288.83,AMD,Ambos,Computron,1-2,3
+ENC-0108,2026-06-17 10:29,Loja,35-44,Docente,RAM,144.77,Kingston,Online,MTEC,6+,5
+ENC-0109,2026-06-27 15:29,Ambato,35-44,Profesional TI,SSD,51.51,WD,Ambos,CompuGamer,6+,3
+ENC-0110,2026-06-26 22:29,Guayaquil,45+,Disenador,CPU,634.42,AMD,Ambos,TecnoGame,1-2,4
+ENC-0111,2026-06-18 00:29,Ambato,18-24,Gamer,SSD,277.58,Samsung,Online,NomadaWare,1-2,2
+ENC-0112,2026-06-16 05:29,Santa Elena,35-44,Profesional TI,Periferico,22.1,Redragon,Ambos,Tecnosmart,1-2,5
+ENC-0113,2026-06-20 15:29,Loja,25-34,Estudiante,SSD,252.6,Crucial,Tienda fisica,Otra,3-5,2
+ENC-0114,2026-06-29 00:29,Machala,35-44,Otro,Monitor,675.39,Samsung,Ambos,Otra,6+,3
+ENC-0115,2026-06-20 07:29,Cuenca,25-34,Otro,Periferico,29.66,Razer,Tienda fisica,TecnoGame,3-5,4
+ENC-0116,2026-06-30 01:29,Machala,18-24,Otro,RAM,225.97,Corsair,Tienda fisica,Otra,3-5,3
+ENC-0117,2026-06-30 18:29,Ambato,45+,Estudiante,SSD,170.44,Samsung,Ambos,CompuGamer,3-5,1
+ENC-0118,2026-06-19 12:29,Ambato,25-34,Gamer,GPU,1252.87,Intel,Ambos,MTEC,1-2,3
+ENC-0119,2026-06-28 17:29,Quito,25-34,Gamer,RAM,98.47,G.Skill,Tienda fisica,Computron,1-2,4
+ENC-0120,2026-06-28 19:29,No especificada,18-24,Estudiante,SSD,217.91,Samsung,Ambos,Computron,6+,3

@@ -1,0 +1,99 @@
+{
+  "fecha_ejecucion": "2026-06-30 02:29:41",
+  "control_3_1_duplicados": {
+    "criterio": "tienda + categoria + clave_canonica + precio_usd",
+    "estrategia": "conservar el registro mas completo",
+    "duplicados_eliminados": 363
+  },
+  "control_3_2_nulos": {
+    "porcentaje_por_campo": {
+      "tienda": 0.0,
+      "categoria": 0.0,
+      "producto": 0.0,
+      "precio_usd": 0.38
+    },
+    "matriz_resolucion": {
+      "precio_usd": "Eliminacion del registro (sin precio no es comparable)",
+      "encuesta.presupuesto_usd": "Imputacion con la mediana del componente",
+      "encuesta.ciudad": "Reemplazo por 'No especificada'"
+    },
+    "registros_eliminados_criticos": 5
+  },
+  "control_3_3_casting": {
+    "ejemplos_antes_despues": [
+      "'$440,00 El precio original era' -> 425.0",
+      "'$210,00 El precio original era' -> 199.0",
+      "'$325,00 El precio original era' -> 315.0",
+      "'$350,00 El precio original era' -> 325.0",
+      "'$260,00 El precio original era' -> 245.0",
+      "'$189,00 El precio original era' -> 179.0",
+      "'$980,00 El precio original era' -> 950.0",
+      "'$590,00 El precio original era' -> 575.0"
+    ],
+    "no_parseables": 5
+  },
+  "control_3_4_estandarizacion": {
+    "categorias_no_estandar": []
+  },
+  "control_3_5_homologacion": {
+    "producto": {
+      "scraping_tiendas": "producto",
+      "archivo_specs": "Model",
+      "encuesta": "(no aplica)"
+    },
+    "precio_usd": {
+      "scraping_tiendas": "precio_raw -> limpiar_precio()",
+      "encuesta": "presupuesto_usd"
+    },
+    "categoria": {
+      "scraping_tiendas": "categoria",
+      "encuesta": "categoria_interes"
+    },
+    "tienda": {
+      "scraping_tiendas": "tienda",
+      "encuesta": "tienda_habitual"
+    }
+  },
+  "control_3_6_bitacora": "logs/errores_pipeline.csv (persistente)",
+  "control_3_7_metricas": {
+    "total_registros_raw": 1388,
+    "total_registros_staging": 940,
+    "registros_depurados_duplicados": 363,
+    "registros_eliminados_nulos": 5,
+    "tasa_completitud_general_pct": 100.0,
+    "tasa_error_pct": 32.28
+  },
+  "cobertura_clave_canonica_pct": 29.79,
+  "distribucion_por_tienda": {
+    "Tecnosmart": 401,
+    "TecnoGame": 135,
+    "NomadaWare": 128,
+    "Computron": 120,
+    "MTEC": 117,
+    "CompuGamer": 39
+  },
+  "distribucion_por_categoria": {
+    "PERIFERICO": 255,
+    "MONITOR": 211,
+    "CPU": 206,
+    "GPU": 142,
+    "RAM": 99,
+    "SSD": 27
+  },
+  "fuente_propia_encuesta": {
+    "registros": 120,
+    "presupuesto_imputado": 6,
+    "ciudad_imputada": 4
+  },
+  "archivo_estructurado_specs": {
+    "registros": 654,
+    "columnas": [
+      "modelo",
+      "nucleos",
+      "hilos",
+      "tdp",
+      "clock_base",
+      "socket"
+    ]
+  }
+}

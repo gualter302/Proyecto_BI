@@ -1,0 +1,9 @@
+timestamp,fuente,tipo_error,descripcion,accion_tomada
+2026-06-30 01:44:34,Archivo:cpu_specs_intel,Esquema,"Columnas requeridas ausentes: ['Model', '# of CPU Cores', 'Default TDP']",Dataset rechazado por no cumplir el esquema esperado
+2026-06-30 02:01:23,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
+2026-06-30 02:06:29,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
+2026-06-30 02:25:46,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
+2026-06-30 02:26:23,Staging:relevancia,Fuera de alcance,80 listados de PC/equipo completo en categorias de componentes,Descartados: no son el componente individual a comparar
+2026-06-30 02:26:23,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
+2026-06-30 02:29:40,Staging:relevancia,Fuera de alcance,80 listados de PC/equipo completo en categorias de componentes,Descartados: no son el componente individual a comparar
+2026-06-30 02:29:41,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
