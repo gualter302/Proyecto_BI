@@ -1,9 +1,0 @@
-# Ignorar cachés internos de Python
-__pycache__/
-*.pyc
-
-# Ignorar la base de datos (para que cada quien genere la suya y no haya conflictos)
-database/*.db
-
-# Opcional: Si los CSV se vuelven muy pesados, descomenta la siguiente línea
-# datos_crudos/*.csv
