@@ -1,0 +1,56 @@
+{
+  "titulo": "Encuesta de habitos de compra de hardware de PC en Ecuador",
+  "anonimo": true,
+  "preguntas": [
+    {
+      "campo": "ciudad",
+      "pregunta": "Ciudad de residencia",
+      "tipo": "opcion"
+    },
+    {
+      "campo": "rango_edad",
+      "pregunta": "Rango de edad",
+      "tipo": "opcion"
+    },
+    {
+      "campo": "ocupacion",
+      "pregunta": "Ocupacion",
+      "tipo": "opcion"
+    },
+    {
+      "campo": "categoria_interes",
+      "pregunta": "Componente que mas te interesa comprar",
+      "tipo": "opcion"
+    },
+    {
+      "campo": "presupuesto_usd",
+      "pregunta": "Presupuesto aproximado (USD)",
+      "tipo": "numerico"
+    },
+    {
+      "campo": "marca_preferida",
+      "pregunta": "Marca preferida para ese componente",
+      "tipo": "opcion"
+    },
+    {
+      "campo": "canal_preferido",
+      "pregunta": "Canal de compra preferido",
+      "tipo": "opcion"
+    },
+    {
+      "campo": "tienda_habitual",
+      "pregunta": "Tienda donde sueles comprar",
+      "tipo": "opcion"
+    },
+    {
+      "campo": "frecuencia_compra_anual",
+      "pregunta": "Compras de hardware al ano",
+      "tipo": "opcion"
+    },
+    {
+      "campo": "importancia_precio",
+      "pregunta": "Importancia del precio (1=baja, 5=alta)",
+      "tipo": "escala"
+    }
+  ]
+}
