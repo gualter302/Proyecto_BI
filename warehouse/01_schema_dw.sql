@@ -1,7 +1,7 @@
 -- ============================================================
--- DATA WAREHOUSE — Proyecto BI Hardware (UPSE, E4 2026)
--- Motor: PostgreSQL 16   |   Modelo: Esquema Estrella (fiel al E2)
--- Se carga EXCLUSIVAMENTE desde la zona Staging del E3.
+-- DATA WAREHOUSE 
+-- Motor: PostgreSQL 16   |   Modelo: Esquema Estrella 
+-- Se carga EXCLUSIVAMENTE desde la zona Staging 
 -- ============================================================
 
 DROP TABLE IF EXISTS fact_precios CASCADE;
