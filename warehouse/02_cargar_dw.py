@@ -6,7 +6,7 @@ las dimensiones y la tabla de hechos del esquema estrella y las inserta en
 PostgreSQL 16.
 
 Conexion (override por variables de entorno PG_*):
-    host=localhost port=5432 db=bi_hardware user=bi_user pass=bi_pass_2026
+    host=localhost port=5433 db=bi_hardware user=bi_user pass=bi_pass_2026
 
 Uso:  python warehouse/02_cargar_dw.py
 """
