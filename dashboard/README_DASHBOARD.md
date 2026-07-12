@@ -6,7 +6,7 @@ PostgreSQL. Comparador de precios de hardware en Ecuador.
 ## Cómo ejecutarlo (local)
 
 ```bash
-# 1. El DW debe estar encendido (contenedor en el puerto 5433)
+# 1. El DW debe estar encendido (contenedor en el puerto 5432)
 docker start bi_hardware_dw
 
 # 2. Instalar dependencias (una vez)
