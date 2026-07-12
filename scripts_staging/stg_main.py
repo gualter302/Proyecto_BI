@@ -79,16 +79,16 @@ def procesar_precios():
     # Los accesorios se detectan por como EMPIEZA el nombre o por frases
     # inequivocas, evitando falsos positivos (ej. un CPU real que "Incluye
     # Disipador" o una GPU con "2 ventiladores" SI se conservan).
-    EQUIPOS = (r"pc\s*gamer|pc\s*gaming|computador|computadora|torre\s*gamer|barebone|"
-               r"all[\s-]*in[\s-]*one|equipo\s*gamer|cpu\s*gamer|laptop|notebook|port[aá]til|"
-               r"tablet|workstation|estaci[oó]n\s*de\s*trabajo")
+    BUNDLES = (r"pc\s*gamer|pc\s*gaming|computador|computadora|torre\s*gamer|barebone|"
+               r"all[\s-]*in[\s-]*one|equipo\s*gamer|cpu\s*gamer")
+    EQUIPOS_INICIO = r"^(laptop|notebook|port[aá]til|tablet|workstation|estaci[oó]n\s*de\s*trabajo)\b"
     ACC_INICIO = (r"^(cooler(?!\s*master)|disipador|ventilador|pasta\s|silla|escritorio|funda|"
                   r"estuche|mochila|bandolera|malet[ií]n|cargador|adaptador\b|cable|mousepad|"
                   r"mouse\s*pad|barra\s+de\s+luz|l[aá]mpara)")
     ACC_FRASE = (r"barra\s+de\s+luz|mouse\s*pad|alfombrilla|cooler\s+kit|kit\s+de\s+limpieza|"
                  r"kit\s+del\s+procesador|estuche\s+para|cable\s+extensi|pasta\s+t[eé]rmica")
     prod = df["producto"].astype(str).str.strip().str.lower()
-    es_equipo = prod.str.contains(EQUIPOS, regex=True, na=False)
+    es_equipo = prod.str.contains(BUNDLES, regex=True, na=False) | prod.str.contains(EQUIPOS_INICIO, regex=True, na=False)
     es_acc    = prod.str.contains(ACC_INICIO, regex=True, na=False) | prod.str.contains(ACC_FRASE, regex=True, na=False)
     es_irrel  = es_equipo | es_acc
     n_irr = int(es_irrel.sum())
