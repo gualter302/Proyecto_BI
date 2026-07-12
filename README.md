@@ -11,6 +11,61 @@ barato cada componente**.
 
 ---
 
+## 🚀 Instalación y ejecución (desde cero)
+
+### Requisitos previos (instalar una sola vez)
+| Programa | Dónde | Nota |
+|---|---|---|
+| **Git** | git-scm.com | Para clonar el repo |
+| **Python 3.11+** | python.org | Marca *"Add Python to PATH"* al instalar |
+| **Docker Desktop** | docker.com | Windows usa WSL2 (el instalador lo configura). Reinicia al terminar. |
+
+### Opción A — Un solo comando (recomendado) ⭐
+
+```bash
+git clone https://github.com/OscarGonzabayM/Proyecto_BI_Hardware.git
+cd Proyecto_BI_Hardware
+pip install -r dashboard/requirements.txt
+# Abre Docker Desktop y espera a que arranque, luego:
+python iniciar.py
+```
+
+`iniciar.py` hace todo automáticamente: enciende la base de datos, restaura los
+datos si está vacía, carga la serie temporal y **abre el dashboard en
+http://localhost:8501**.
+
+### Opción B — Paso a paso (manual)
+
+```bash
+# 1. Levantar el Data Warehouse (PostgreSQL en Docker, puerto 5433)
+docker run -d --name bi_hardware_dw -e POSTGRES_USER=bi_user \
+  -e POSTGRES_PASSWORD=bi_pass_2026 -e POSTGRES_DB=bi_hardware \
+  -p 5433:5432 -v bi_hardware_pgdata:/var/lib/postgresql/data postgres:16
+
+# 2. Cargar datos (esquema + 822 registros + vistas KPI)
+docker exec -i bi_hardware_dw psql -U bi_user -d bi_hardware < warehouse/dump_bi_hardware.sql
+
+# 3. Cargar la serie temporal (el dashboard la necesita)
+python warehouse/06_cargar_tasas.py
+
+# 4. Lanzar el dashboard
+streamlit run dashboard/app.py    # abre http://localhost:8501
+```
+
+### Día a día (cuando ya está instalado)
+```bash
+python iniciar.py        # enciende la BD y abre el dashboard
+```
+
+> **Re-correr el pipeline ETL completo** (scraping incluido, opcional — no hace
+> falta para ver el dashboard): `pip install playwright playwright-stealth
+> beautifulsoup4 && python -m playwright install chromium && python run_pipeline.py`
+>
+> Guías detalladas: [warehouse/README_DW.md](warehouse/README_DW.md) (base de
+> datos) y [dashboard/README_DASHBOARD.md](dashboard/README_DASHBOARD.md) (dashboard).
+
+---
+
 ## 1. Lógica de negocio
 
 > Para un mismo producto (ej. *AMD Ryzen 9 9950X3D*), ¿en qué tienda
