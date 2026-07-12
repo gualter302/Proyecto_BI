@@ -32,7 +32,7 @@ Al inicio del archivo, bloque **`CONFIG`**:
 ```python
 TITULO = "Comparador de Precios de Hardware · Ecuador"   # <- cámbialo aquí
 SUBTITULO = "Data Warehouse en vivo · ..."
-PALETA = ["#0072B2", "#E69F00", ...]   # colores de los gráficos (orden fijo)
+PALETA = ["#0072B2", "#E69F00", "#009E73"]   # colores de los gráficos (orden fijo)
 ```
 
 ### 2. Cambiar una consulta (qué datos se leen)
