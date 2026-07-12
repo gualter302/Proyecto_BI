@@ -1,9 +1,6 @@
 """
 controles_calidad.py  —  Framework de Calidad de Datos (Core de Evaluacion).
 
-Implementa EN CODIGO los 7 controles obligatorios del entregable, cada uno
-devolviendo metricas cuantitativas (no descripciones cualitativas):
-
   3.1 Duplicados            -> control_duplicados()
   3.2 Control de Nulos      -> control_nulos()
   3.3 Formatos y Casting    -> limpiar_precio() / control_casting()

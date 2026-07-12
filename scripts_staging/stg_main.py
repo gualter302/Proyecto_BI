@@ -72,19 +72,32 @@ def procesar_precios():
     print("[4] Estandarizacion estricta (UTF-8, categorias)...")
     df, est = qc.control_estandarizacion(df)
 
-    # Filtro de relevancia: la busqueda por keyword a veces trae PCs/equipos
-    # completos (ej. "PC Gamer con RTX 5090"), que no son el componente suelto y
-    # distorsionan la comparacion de precios. Se descartan de las categorias de
-    # componentes y se registra en bitacora.
-    BUNDLES = r"pc\s*gamer|pc\s*gaming|computador|computadora|torre\s*gamer|barebone|all[\s-]*in[\s-]*one|equipo\s*gamer|cpu\s*gamer"
-    es_bundle = df["producto"].str.contains(BUNDLES, case=False, regex=True, na=False)
-    n_bundles = int(es_bundle.sum())
-    if n_bundles:
-        df = df[~es_bundle].copy()
+    # Filtro de relevancia: la busqueda por keyword arrastra elementos que NO son
+    # el componente individual buscado y distorsionan la comparacion:
+    #   (a) equipos completos: PCs armadas, laptops, notebooks, tablets.
+    #   (b) accesorios: coolers, disipadores, mousepads, cables, barras de luz...
+    # Los accesorios se detectan por como EMPIEZA el nombre o por frases
+    # inequivocas, evitando falsos positivos (ej. un CPU real que "Incluye
+    # Disipador" o una GPU con "2 ventiladores" SI se conservan).
+    BUNDLES = (r"pc\s*gamer|pc\s*gaming|computador|computadora|torre\s*gamer|barebone|"
+               r"all[\s-]*in[\s-]*one|equipo\s*gamer|cpu\s*gamer")
+    EQUIPOS_INICIO = r"^(laptop|notebook|port[aá]til|tablet|workstation|estaci[oó]n\s*de\s*trabajo)\b"
+    ACC_INICIO = (r"^(cooler(?!\s*master)|disipador|ventilador|pasta\s|silla|escritorio|funda|"
+                  r"estuche|mochila|bandolera|malet[ií]n|cargador|adaptador\b|cable|mousepad|"
+                  r"mouse\s*pad|barra\s+de\s+luz|l[aá]mpara)")
+    ACC_FRASE = (r"barra\s+de\s+luz|mouse\s*pad|alfombrilla|cooler\s+kit|kit\s+de\s+limpieza|"
+                 r"kit\s+del\s+procesador|estuche\s+para|cable\s+extensi|pasta\s+t[eé]rmica")
+    prod = df["producto"].astype(str).str.strip().str.lower()
+    es_equipo = prod.str.contains(BUNDLES, regex=True, na=False) | prod.str.contains(EQUIPOS_INICIO, regex=True, na=False)
+    es_acc    = prod.str.contains(ACC_INICIO, regex=True, na=False) | prod.str.contains(ACC_FRASE, regex=True, na=False)
+    es_irrel  = es_equipo | es_acc
+    n_irr = int(es_irrel.sum())
+    if n_irr:
+        df = df[~es_irrel].copy()
         bitacora.registrar("Staging:relevancia", "Fuera de alcance",
-                           f"{n_bundles} listados de PC/equipo completo en categorias de componentes",
+                           f"{n_irr} no-componentes (equipos completos, laptops, accesorios) en categorias de componentes",
                            "Descartados: no son el componente individual a comparar")
-    print(f"      Equipos completos (bundles) descartados: {n_bundles}")
+    print(f"      No-componentes descartados (equipos/laptops/accesorios): {n_irr}")
 
     print("[5] Formatos y casting de precios (string sucio -> float)...")
     casting = qc.control_casting(df)

@@ -97,7 +97,7 @@ orquestados por `stg_main.py`. Métricas exactas en `logs/reporte_calidad.json`.
 |---|---|
 | Registros crudos procesados (Raw) | 1.388 |
 | Registros aptos para Warehouse (Staging) | 940 |
-| Equipos completos descartados (relevancia) | 80 |
+| No-componentes descartados (relevancia) | 80 |
 | Registros depurados por duplicados | 363 |
 | Registros eliminados por nulos críticos | 5 |
 | Tasa de completitud general | 100 % |
