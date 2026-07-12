@@ -6,7 +6,7 @@ import os
 import psycopg2
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-PG = dict(host=os.environ.get("PG_HOST", "localhost"), port=os.environ.get("PG_PORT", "5432"),
+PG = dict(host=os.environ.get("PG_HOST", "localhost"), port=os.environ.get("PG_PORT", "5433"),
           dbname=os.environ.get("PG_DB", "bi_hardware"), user=os.environ.get("PG_USER", "bi_user"),
           password=os.environ.get("PG_PASS", "bi_pass_2026"))
 

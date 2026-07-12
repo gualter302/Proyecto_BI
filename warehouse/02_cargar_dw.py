@@ -6,7 +6,7 @@ las dimensiones y la tabla de hechos del esquema estrella y las inserta en
 PostgreSQL 16.
 
 Conexion (override por variables de entorno PG_*):
-    host=localhost port=5432 db=bi_hardware user=bi_user pass=bi_pass_2026
+    host=localhost port=5433 db=bi_hardware user=bi_user pass=bi_pass_2026
 
 Uso:  python warehouse/02_cargar_dw.py
 """
@@ -25,7 +25,7 @@ SCHEMA_SQL = os.path.join(os.path.dirname(os.path.abspath(__file__)), "01_schema
 
 PG = dict(
     host=os.environ.get("PG_HOST", "localhost"),
-    port=os.environ.get("PG_PORT", "5432"),
+    port=os.environ.get("PG_PORT", "5433"),
     dbname=os.environ.get("PG_DB", "bi_hardware"),
     user=os.environ.get("PG_USER", "bi_user"),
     password=os.environ.get("PG_PASS", "bi_pass_2026"),
