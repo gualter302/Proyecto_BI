@@ -21,7 +21,7 @@ cargado **exclusivamente desde la zona Staging del E3** (no desde Raw).
 ```bash
 docker run -d --name bi_hardware_dw \
   -e POSTGRES_USER=bi_user -e POSTGRES_PASSWORD=bi_pass_2026 \
-  -e POSTGRES_DB=bi_hardware -p 5432:5432 \
+  -e POSTGRES_DB=bi_hardware -p 5433:5432 \
   -v bi_hardware_pgdata:/var/lib/postgresql/data postgres:16
 ```
 
@@ -30,7 +30,7 @@ docker run -d --name bi_hardware_dw \
 | Parámetro | Valor |
 |---|---|
 | Host | localhost |
-| Puerto | 5432 |
+| Puerto | 5433 |
 | Base de datos | bi_hardware |
 | Usuario | bi_user |
 | Contraseña | bi_pass_2026 |
@@ -76,7 +76,7 @@ docker exec -i bi_hardware_dw psql -U bi_user -d bi_hardware -f - < warehouse/03
 
 ### Opción 2 — Con una herramienta gráfica (recomendado para explorar)
 Instalar **DBeaver** (gratis) o **pgAdmin**, crear una conexión PostgreSQL con las
-credenciales de arriba (host `localhost`, puerto `5432`, base `bi_hardware`,
+credenciales de arriba (host `localhost`, puerto `5433`, base `bi_hardware`,
 usuario `bi_user`, contraseña `bi_pass_2026`) y navegar las tablas/vistas
 visualmente. También sirve la extensión **PostgreSQL** de VS Code.
 
