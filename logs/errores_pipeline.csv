@@ -7,3 +7,7 @@ timestamp,fuente,tipo_error,descripcion,accion_tomada
 2026-06-30 02:26:23,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
 2026-06-30 02:29:40,Staging:relevancia,Fuera de alcance,80 listados de PC/equipo completo en categorias de componentes,Descartados: no son el componente individual a comparar
 2026-06-30 02:29:41,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
+2026-07-04 19:32:28,Staging:relevancia,Fuera de alcance,"227 no-componentes (equipos completos, laptops, accesorios) en categorias de componentes",Descartados: no son el componente individual a comparar
+2026-07-04 19:32:28,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
+2026-07-04 19:33:26,Staging:relevancia,Fuera de alcance,"234 no-componentes (equipos completos, laptops, accesorios) en categorias de componentes",Descartados: no son el componente individual a comparar
+2026-07-04 19:33:26,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
