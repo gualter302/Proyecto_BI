@@ -101,7 +101,8 @@ def q_serie_tasas():
 # ─────────────────────────────────────────────────────────────
 # LAYOUT + ESTILO (CSS)
 # ─────────────────────────────────────────────────────────────
-st.set_page_config(page_title=TITULO, page_icon="💻", layout="wide")
+st.set_page_config(page_title=TITULO, page_icon="💻", layout="wide",
+                   initial_sidebar_state="collapsed")
 
 st.markdown("""
 <style>
@@ -129,6 +130,13 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
     box-shadow: 0 4px 14px rgba(0,0,0,0.28);
 }
 div[data-testid="stVerticalBlockBorderWrapper"] * { color: #12314A; }
+
+/* Ocultar por completo la barra lateral y su botón */
+section[data-testid="stSidebar"] { display: none !important; }
+[data-testid="stSidebarCollapsedControl"] { display: none !important; }
+
+/* Barra de filtros superior en un panel claro */
+div[data-testid="stExpander"] { border-radius: 14px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -142,13 +150,14 @@ except Exception as e:
     st.error(f"No se pudo conectar al Data Warehouse. ¿Está encendido el contenedor?\n\n{e}")
     st.stop()
 
-# --- Filtros ---
-st.sidebar.header("🔎 Filtros")
-cats_sel = st.sidebar.multiselect("Categoría", cats_all, default=cats_all)
-tiendas_sel = st.sidebar.multiselect("Tienda", tiendas_all, default=tiendas_all)
+# --- Filtros: barra superior accesible (sin barra lateral) ---
 rango = run_sql("SELECT MIN(precio_usd) lo, MAX(precio_usd) hi FROM fact_precios").iloc[0]
-pmin, pmax = st.sidebar.slider("Rango de precio (USD)", 0.0, float(rango.hi),
-                               (0.0, float(rango.hi)), step=50.0)
+st.markdown("##### 🔎 Filtros")
+fc1, fc2, fc3 = st.columns([1.2, 1.4, 1.8])
+cats_sel = fc1.multiselect("Categoría", cats_all, default=cats_all)
+tiendas_sel = fc2.multiselect("Tienda", tiendas_all, default=tiendas_all)
+pmin, pmax = fc3.slider("Rango de precio (USD)", 0.0, float(rango.hi),
+                        (0.0, float(rango.hi)), step=50.0)
 if not cats_sel: cats_sel = cats_all
 if not tiendas_sel: tiendas_sel = tiendas_all
 
@@ -261,5 +270,5 @@ with tab3:
                              FROM vw_kpi_outliers ORDER BY precio_usd DESC LIMIT 15""")
             st.dataframe(out, use_container_width=True, height=320, hide_index=True)
 
-st.sidebar.divider()
-st.sidebar.caption("Datos leídos en vivo desde PostgreSQL (Data Warehouse).")
+st.divider()
+st.caption("Datos leídos en vivo desde PostgreSQL (Data Warehouse) · Dashboard BI · UPSE")
