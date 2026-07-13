@@ -1,0 +1,14 @@
+# ============================================================
+#  TEMA DEL DASHBOARD  (estilo ejecutivo azul marino)
+#  Cambia estos valores y reinicia:  streamlit run dashboard/app.py
+# ============================================================
+[theme]
+base = "dark"
+primaryColor = "#38BDF8"             # acento: sliders, selección
+backgroundColor = "#0E2A44"          # fondo azul marino profundo
+secondaryBackgroundColor = "#16385A" # barra lateral (azul más claro)
+textColor = "#EAF2F8"                # texto claro
+font = "sans serif"
+
+[server]
+headless = true
