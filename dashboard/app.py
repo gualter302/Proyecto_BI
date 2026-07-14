@@ -7,8 +7,8 @@ Lee EN VIVO desde el Data Warehouse PostgreSQL (NO desde CSV). Cumple:
   - Filtros reactivos por categoria, tienda y rango de precio.
   - Multi-vista: 3 pestañas.
 
-Estilo ejecutivo (fondo azul marino + tarjetas y paneles claros).
-Ejecutar en local:  streamlit run dashboard/app.py
+Estilo ejecutivo "DashPro": barra lateral oscura + area clara con tarjetas y
+paneles blancos.  Ejecutar:  streamlit run dashboard/app.py
 
 Para editar: colores de la INTERFAZ -> .streamlit/config.toml
              colores de los GRAFICOS -> variable PALETA (abajo)
@@ -25,13 +25,16 @@ from sqlalchemy import create_engine, text
 TITULO = "Comparador de Precios de Hardware · Ecuador"
 SUBTITULO = "Análisis en vivo desde el Data Warehouse · VI Inteligencia de Negocios · UPSE"
 
-# Paleta de los GRAFICOS (estilo ejecutivo). Orden fijo por serie.
-PALETA = ["#2E75B6", "#6AA84F", "#E0A93B", "#8E6FB3", "#C0504D", "#3AAFA9", "#E8973A"]
+# Paleta de los GRAFICOS (azules corporativos + acentos). Orden fijo por serie.
+PALETA = ["#1F4E79", "#2E75B6", "#5B9BD5", "#E0A93B", "#6AA84F", "#B0413E", "#8E6FB3"]
 
-# Colores de los paneles claros (donde van los gráficos)
-PANEL_BG   = "#E9F2FA"   # fondo claro de cada gráfico
-PANEL_TXT  = "#12314A"   # texto dentro del panel claro
-PANEL_GRID = "#CBD9E6"   # líneas de la cuadrícula
+# Colores de los paneles blancos (donde van los gráficos)
+PANEL_BG   = "#FFFFFF"   # fondo del gráfico
+PANEL_TXT  = "#1F2A37"   # texto dentro del panel
+PANEL_GRID = "#E1E8EF"   # líneas de la cuadrícula
+
+# Columnas que SIEMPRE debe tener la base (evita KeyError si el filtro deja 0 filas)
+COLS_BASE = ["categoria", "marca", "clave_canonica", "identificado", "nombre_tienda", "precio_usd"]
 
 PG = {
     "host": os.environ.get("PG_HOST", "localhost"),
@@ -55,13 +58,11 @@ def run_sql(sql: str, params: dict | None = None) -> pd.DataFrame:
 
 
 def estilizar(fig, alto=340):
-    """Aplica el estilo 'panel claro' a un gráfico Plotly."""
+    """Aplica el estilo 'panel blanco' a un gráfico Plotly."""
     fig.update_layout(
-        height=alto,
-        paper_bgcolor=PANEL_BG,
-        plot_bgcolor=PANEL_BG,
+        height=alto, paper_bgcolor=PANEL_BG, plot_bgcolor=PANEL_BG,
         font=dict(color=PANEL_TXT, size=13),
-        margin=dict(l=12, r=12, t=12, b=12),
+        margin=dict(l=12, r=12, t=10, b=10),
         legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=PANEL_TXT)),
         colorway=PALETA,
     )
@@ -82,7 +83,7 @@ def q_dimensiones():
 
 
 def q_base(cats, tiendas, pmin, pmax):
-    """Lee de vw_precios_validos (excluye outliers) para KPIs consistentes."""
+    """Lee de vw_precios_validos (excluye outliers). Garantiza las columnas."""
     sql = """
         SELECT categoria, marca, clave_canonica, identificado,
                nombre_tienda, precio_usd
@@ -91,7 +92,9 @@ def q_base(cats, tiendas, pmin, pmax):
           AND nombre_tienda = ANY(:tiendas)
           AND precio_usd BETWEEN :pmin AND :pmax
     """
-    return run_sql(sql, {"cats": cats, "tiendas": tiendas, "pmin": pmin, "pmax": pmax})
+    df = run_sql(sql, {"cats": cats, "tiendas": tiendas, "pmin": pmin, "pmax": pmax})
+    # Garantiza SIEMPRE las columnas esperadas (aunque el filtro deje 0 filas)
+    return df.reindex(columns=COLS_BASE)
 
 
 def q_serie_tasas():
@@ -102,77 +105,101 @@ def q_serie_tasas():
 # LAYOUT + ESTILO (CSS)
 # ─────────────────────────────────────────────────────────────
 st.set_page_config(page_title=TITULO, page_icon="💻", layout="wide",
-                   initial_sidebar_state="collapsed")
+                   initial_sidebar_state="expanded")
 
 st.markdown("""
 <style>
-/* Fondo con degradado azul marino */
-.stApp { background: linear-gradient(160deg, #0E2A44 0%, #123A5A 100%); }
+/* Área principal gris claro */
+.stApp { background-color: #E9EDF2; }
 
-/* Tarjetas de KPI: claras, redondeadas, con sombra */
+/* ---------- BARRA LATERAL OSCURA (estilo DashPro) ---------- */
+section[data-testid="stSidebar"] { background-color: #15232F; }
+section[data-testid="stSidebar"] * { color: #DCE6EF; }
+/* Desplegables (multiselect) legibles sobre la barra oscura */
+section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+    background-color: #22384A !important; border-color: #33506A !important;
+}
+section[data-testid="stSidebar"] [data-baseweb="tag"] { background-color: #2E75B6 !important; }
+section[data-testid="stSidebar"] div[data-baseweb="select"] svg { fill: #DCE6EF; }
+
+/* ---------- TARJETAS DE KPI (blancas) ---------- */
 div[data-testid="stMetric"] {
-    background-color: #E9F2FA;
-    border-radius: 16px;
-    padding: 18px 20px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.30);
-    border: 1px solid rgba(255,255,255,0.10);
+    background-color: #FFFFFF;
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 12px rgba(31,42,55,0.08);
+    border: 1px solid #E5EBF1;
 }
-div[data-testid="stMetric"] label p { color: #4A6072 !important; font-weight: 600; }
-div[data-testid="stMetricValue"] { color: #0C2A45 !important; font-weight: 800; }
+div[data-testid="stMetric"] label p { color: #5C6B7A !important; font-weight: 600; }
+div[data-testid="stMetricValue"] { color: #12314A !important; font-weight: 800; }
 
-/* Título grande */
-h1 { font-weight: 800; letter-spacing: .3px; }
-
-/* Paneles de los gráficos (contenedores con borde) */
+/* ---------- PANELES DE GRÁFICOS (blancos) ---------- */
 div[data-testid="stVerticalBlockBorderWrapper"] {
-    background-color: #E9F2FA;
-    border-radius: 16px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.28);
+    background-color: #FFFFFF;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(31,42,55,0.08);
+    border: 1px solid #E5EBF1;
 }
-div[data-testid="stVerticalBlockBorderWrapper"] * { color: #12314A; }
-
-/* Ocultar por completo la barra lateral y su botón */
-section[data-testid="stSidebar"] { display: none !important; }
-[data-testid="stSidebarCollapsedControl"] { display: none !important; }
-
-/* Barra de filtros superior en un panel claro */
-div[data-testid="stExpander"] { border-radius: 14px; }
+h1 { font-weight: 800; color: #12314A; }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("💻 " + TITULO)
-st.caption(SUBTITULO)
-
-# --- Conexión ---
+# ─────────────────────────────────────────────────────────────
+# CONEXIÓN
+# ─────────────────────────────────────────────────────────────
 try:
     cats_all, tiendas_all = q_dimensiones()
+    rango = run_sql("SELECT MIN(precio_usd) lo, MAX(precio_usd) hi FROM fact_precios").iloc[0]
 except Exception as e:
     st.error(f"No se pudo conectar al Data Warehouse. ¿Está encendido el contenedor?\n\n{e}")
     st.stop()
 
-# --- Filtros: barra superior accesible (sin barra lateral) ---
-rango = run_sql("SELECT MIN(precio_usd) lo, MAX(precio_usd) hi FROM fact_precios").iloc[0]
-st.markdown("##### 🔎 Filtros")
-fc1, fc2, fc3 = st.columns([1.2, 1.4, 1.8])
-cats_sel = fc1.multiselect("Categoría", cats_all, default=cats_all)
-tiendas_sel = fc2.multiselect("Tienda", tiendas_all, default=tiendas_all)
-pmin, pmax = fc3.slider("Rango de precio (USD)", 0.0, float(rango.hi),
-                        (0.0, float(rango.hi)), step=50.0)
+# ─────────────────────────────────────────────────────────────
+# BARRA LATERAL: logo + filtros DESPLEGABLES
+# ─────────────────────────────────────────────────────────────
+with st.sidebar:
+    st.markdown("### 💻 HARDWARE · EC")
+    st.caption("Comparador de precios · BI")
+    st.divider()
+    st.markdown("#### 🔎 Filtros")
+    # default vacío = "Todas" -> desplegables limpios que se abren al hacer clic
+    cats_sel = st.multiselect("Categoría", cats_all, default=[], placeholder="Todas")
+    tiendas_sel = st.multiselect("Tienda", tiendas_all, default=[], placeholder="Todas")
+    pmin, pmax = st.slider("Rango de precio (USD)", 0.0, float(rango.hi),
+                           (0.0, float(rango.hi)), step=50.0)
+    st.divider()
+    st.caption("Datos en vivo desde PostgreSQL (DW)")
+
+# vacío = todas
 if not cats_sel: cats_sel = cats_all
 if not tiendas_sel: tiendas_sel = tiendas_all
 
 df = q_base(cats_sel, tiendas_sel, pmin, pmax)
 
+# ─────────────────────────────────────────────────────────────
+# ENCABEZADO + PESTAÑAS
+# ─────────────────────────────────────────────────────────────
+st.title("💻 " + TITULO)
+st.caption(SUBTITULO)
+
+if df.empty:
+    st.warning("⚠️ No hay datos con los filtros seleccionados. Amplía el rango de precio "
+               "o incluye más categorías/tiendas.")
+    st.stop()
+
 tab1, tab2, tab3 = st.tabs(["📊 Resumen Ejecutivo", "🏷️ Comparador de Precios", "📈 Tendencias y Calidad"])
 
 # ═════════════════════ TAB 1 — RESUMEN ═════════════════════
 with tab1:
-    df_id = df[df["identificado"]]
-    comp = df_id.groupby("clave_canonica")["nombre_tienda"].nunique()
+    df_id = df[df["identificado"] == True]
+    comp = df_id.groupby("clave_canonica")["nombre_tienda"].nunique() if not df_id.empty else pd.Series(dtype=int)
     modelos_comp = int((comp >= 2).sum())
-    g = df_id[df_id["clave_canonica"].isin(comp[comp >= 2].index)].groupby("clave_canonica")["precio_usd"]
-    brecha = ((g.max() - g.min()) / g.min() * 100).mean() if modelos_comp else 0
-    ahorro = ((g.mean() - g.min()) / g.mean() * 100).mean() if modelos_comp else 0
+    if modelos_comp:
+        g = df_id[df_id["clave_canonica"].isin(comp[comp >= 2].index)].groupby("clave_canonica")["precio_usd"]
+        brecha = ((g.max() - g.min()) / g.min() * 100).mean()
+        ahorro = ((g.mean() - g.min()) / g.mean() * 100).mean()
+    else:
+        brecha = ahorro = 0
 
     c1, c2, c3, c4, c5, c6 = st.columns(6)
     c1.metric("Ofertas analizadas", f"{len(df):,}")
@@ -204,7 +231,7 @@ with tab1:
 # ═════════════════════ TAB 2 — COMPARADOR ═════════════════════
 with tab2:
     st.subheader("¿En qué tienda está más barato cada modelo?")
-    df_id = df[df["identificado"]].copy()
+    df_id = df[df["identificado"] == True].copy()
     if df_id.empty:
         st.info("No hay modelos identificados (CPU/GPU) con los filtros actuales.")
     else:
@@ -214,32 +241,35 @@ with tab2:
                         tiendas=("nombre_tienda", "nunique"))
                    .reset_index())
         resumen = resumen[resumen["tiendas"] >= 2]
-        idx = df_id.groupby("clave_canonica")["precio_usd"].idxmin()
-        barata = df_id.loc[idx, ["clave_canonica", "nombre_tienda"]].rename(
-            columns={"nombre_tienda": "tienda_mas_barata"})
-        resumen = resumen.merge(barata, on="clave_canonica", how="left")
-        resumen["ahorro_%"] = ((resumen["precio_max"] - resumen["precio_min"]) /
-                               resumen["precio_max"] * 100).round(1)
+        if resumen.empty:
+            st.info("No hay modelos presentes en 2+ tiendas con los filtros actuales.")
+        else:
+            idx = df_id.groupby("clave_canonica")["precio_usd"].idxmin()
+            barata = df_id.loc[idx, ["clave_canonica", "nombre_tienda"]].rename(
+                columns={"nombre_tienda": "tienda_mas_barata"})
+            resumen = resumen.merge(barata, on="clave_canonica", how="left")
+            resumen["ahorro_%"] = ((resumen["precio_max"] - resumen["precio_min"]) /
+                                   resumen["precio_max"] * 100).round(1)
 
-        colL, colR = st.columns([1.1, 1])
-        with colL:
-            with st.container(border=True):
-                st.markdown("**Modelos comparables** (menor precio y ahorro)")
-                st.dataframe(resumen.sort_values("ahorro_%", ascending=False)
-                             [["clave_canonica", "categoria", "tienda_mas_barata",
-                               "precio_min", "precio_max", "ahorro_%"]],
-                             use_container_width=True, height=420, hide_index=True)
-        with colR:
-            with st.container(border=True):
-                st.markdown("**Dispersión: precio mínimo vs máximo por modelo**")
-                fig = px.scatter(resumen, x="precio_min", y="precio_max", color="categoria",
-                                 hover_name="clave_canonica", color_discrete_sequence=PALETA,
-                                 size="ahorro_%", size_max=18)
-                m = resumen["precio_max"].max()
-                fig.add_shape(type="line", x0=0, y0=0, x1=m, y1=m,
-                              line=dict(color="#94A9BD", dash="dot"))
-                fig.update_layout(xaxis_title="Precio mínimo (USD)", yaxis_title="Precio máximo (USD)")
-                st.plotly_chart(estilizar(fig, alto=420), use_container_width=True)
+            colL, colR = st.columns([1.1, 1])
+            with colL:
+                with st.container(border=True):
+                    st.markdown("**Modelos comparables** (menor precio y ahorro)")
+                    st.dataframe(resumen.sort_values("ahorro_%", ascending=False)
+                                 [["clave_canonica", "categoria", "tienda_mas_barata",
+                                   "precio_min", "precio_max", "ahorro_%"]],
+                                 use_container_width=True, height=420, hide_index=True)
+            with colR:
+                with st.container(border=True):
+                    st.markdown("**Dispersión: precio mínimo vs máximo por modelo**")
+                    fig = px.scatter(resumen, x="precio_min", y="precio_max", color="categoria",
+                                     hover_name="clave_canonica", color_discrete_sequence=PALETA,
+                                     size="ahorro_%", size_max=18)
+                    m = float(resumen["precio_max"].max())
+                    fig.add_shape(type="line", x0=0, y0=0, x1=m, y1=m,
+                                  line=dict(color="#94A9BD", dash="dot"))
+                    fig.update_layout(xaxis_title="Precio mínimo (USD)", yaxis_title="Precio máximo (USD)")
+                    st.plotly_chart(estilizar(fig, alto=420), use_container_width=True)
 
 # ═════════════════════ TAB 3 — TENDENCIAS Y CALIDAD ═════════════════════
 with tab3:
@@ -247,10 +277,13 @@ with tab3:
         st.markdown("**Serie temporal — Tasas de cambio de referencia (USD →)**")
         try:
             tasas = q_serie_tasas()
-            fig = px.line(tasas, x="fecha", y="tasa_usd", color="moneda",
-                          color_discrete_sequence=PALETA, markers=True)
-            fig.update_layout(xaxis_title="Fecha", yaxis_title="Unidades por 1 USD")
-            st.plotly_chart(estilizar(fig, alto=360), use_container_width=True)
+            if tasas.empty:
+                st.info("Ejecuta warehouse/06_cargar_tasas.py para ver la serie temporal.")
+            else:
+                fig = px.line(tasas, x="fecha", y="tasa_usd", color="moneda",
+                              color_discrete_sequence=PALETA, markers=True)
+                fig.update_layout(xaxis_title="Fecha", yaxis_title="Unidades por 1 USD")
+                st.plotly_chart(estilizar(fig, alto=360), use_container_width=True)
         except Exception:
             st.info("Tabla fact_tasa_cambio no encontrada. Ejecuta warehouse/06_cargar_tasas.py.")
 
@@ -269,6 +302,3 @@ with tab3:
             out = run_sql("""SELECT categoria, clave_canonica, nombre_tienda, precio_usd
                              FROM vw_kpi_outliers ORDER BY precio_usd DESC LIMIT 15""")
             st.dataframe(out, use_container_width=True, height=320, hide_index=True)
-
-st.divider()
-st.caption("Datos leídos en vivo desde PostgreSQL (Data Warehouse) · Dashboard BI · UPSE")
