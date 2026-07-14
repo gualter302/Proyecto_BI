@@ -7,7 +7,7 @@ Lee EN VIVO desde el Data Warehouse PostgreSQL (NO desde CSV). Cumple:
   - Filtros reactivos por categoria, tienda y rango de precio.
   - Multi-vista: 3 pestañas.
 
-Estilo ejecutivo "DashPro": barra lateral oscura + area clara con tarjetas y
+Estilo ejecutivo "DashPro": barra lateral oscura + área clara con tarjetas y
 paneles blancos.  Ejecutar:  streamlit run dashboard/app.py
 
 Para editar: colores de la INTERFAZ -> .streamlit/config.toml
@@ -169,6 +169,13 @@ except Exception as e:
     st.error(f"No se pudo conectar al Data Warehouse. ¿Está encendido el contenedor?\n\n{e}")
     st.stop()
 
+# El DW podría estar vacío (MIN/MAX devuelven NULL) -> validar antes de usar en el slider
+precio_max = float(rango.hi) if pd.notna(rango.hi) else 0.0
+if precio_max <= 0 or not cats_all:
+    st.warning("El Data Warehouse no tiene datos cargados. Carga el DW antes de usar el "
+               "dashboard (ver el README principal o ejecuta `python iniciar.py`).")
+    st.stop()
+
 # ─────────────────────────────────────────────────────────────
 # BARRA LATERAL: logo + filtros DESPLEGABLES
 # ─────────────────────────────────────────────────────────────
@@ -180,8 +187,8 @@ with st.sidebar:
     # default vacío = "Todas" -> desplegables limpios que se abren al hacer clic
     cats_sel = st.multiselect("Categoría", cats_all, default=[], placeholder="Todas")
     tiendas_sel = st.multiselect("Tienda", tiendas_all, default=[], placeholder="Todas")
-    pmin, pmax = st.slider("Rango de precio (USD)", 0.0, float(rango.hi),
-                           (0.0, float(rango.hi)), step=50.0)
+    pmin, pmax = st.slider("Rango de precio (USD)", 0.0, precio_max,
+                           (0.0, precio_max), step=50.0)
     st.divider()
     st.caption("Datos en vivo desde PostgreSQL (DW)")
 

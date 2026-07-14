@@ -72,9 +72,14 @@ El E5 pide una URL pública. Como Streamlit Cloud no puede ver tu `localhost`,
 hay dos caminos:
 
 - **Opción A (URL pública real):** subir el DW a **Neon** (PostgreSQL gratis en
-  la nube) y el dashboard a **Streamlit Community Cloud**. La app se conecta con
-  variables de entorno (`PG_HOST`, `PG_PORT`, `PG_USER`, `PG_PASS`, `PG_DB`)
-  puestas en los *Secrets* de Streamlit Cloud.
+  la nube) y el dashboard a **Streamlit Community Cloud**. En los *Secrets* de
+  Streamlit Cloud se pone **`DATABASE_URL`** con la cadena de conexión de Neon
+  (recomendado), por ejemplo:
+  ```toml
+  DATABASE_URL = "postgresql://usuario:clave@ep-xxxx.aws.neon.tech/neondb?sslmode=require"
+  ```
+  Alternativamente se pueden usar las variables sueltas `PG_HOST`, `PG_PORT`,
+  `PG_USER`, `PG_PASS`, `PG_DB`. La app (`app.py`) lee cualquiera de las dos vías.
 - **Opción B (permitida):** ejecutarlo en local y entregar instrucciones + un
   **video demostrativo**.
 
