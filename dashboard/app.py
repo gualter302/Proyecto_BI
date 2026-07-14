@@ -168,6 +168,36 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
     border: 1px solid #E5EBF1;
 }
 h1 { font-weight: 800; color: #12314A; }
+
+/* ---------- ANIMACIONES DE ENTRADA ---------- */
+@keyframes aparecer {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+/* Tarjetas de KPI: entran escalonadas una tras otra */
+div[data-testid="stMetric"] { animation: aparecer .5s ease both; }
+div[data-testid="stHorizontalBlock"] > div:nth-child(1) div[data-testid="stMetric"] { animation-delay: .05s; }
+div[data-testid="stHorizontalBlock"] > div:nth-child(2) div[data-testid="stMetric"] { animation-delay: .12s; }
+div[data-testid="stHorizontalBlock"] > div:nth-child(3) div[data-testid="stMetric"] { animation-delay: .19s; }
+div[data-testid="stHorizontalBlock"] > div:nth-child(4) div[data-testid="stMetric"] { animation-delay: .26s; }
+div[data-testid="stHorizontalBlock"] > div:nth-child(5) div[data-testid="stMetric"] { animation-delay: .33s; }
+div[data-testid="stHorizontalBlock"] > div:nth-child(6) div[data-testid="stMetric"] { animation-delay: .40s; }
+
+/* Paneles de gráficos: entran después de los KPIs */
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    animation: aparecer .6s ease both;
+    animation-delay: .45s;
+}
+
+/* Título y encabezado */
+h1 { animation: aparecer .5s ease both; }
+
+/* Respeta a quien prefiere menos movimiento (accesibilidad) */
+@media (prefers-reduced-motion: reduce) {
+    div[data-testid="stMetric"],
+    div[data-testid="stVerticalBlockBorderWrapper"],
+    h1 { animation: none !important; }
+}
 </style>
 """, unsafe_allow_html=True)
 
