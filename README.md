@@ -66,6 +66,35 @@ python iniciar.py        # enciende la BD y abre el dashboard
 
 ---
 
+## 🌐 Acceso público en la nube (Entregable 5)
+
+El proyecto está desplegado y accesible públicamente:
+
+| Componente | Plataforma | Acceso |
+|---|---|---|
+| **Dashboard interactivo** | Streamlit Community Cloud | **https://TU-APP.streamlit.app** ← *(reemplazar con la URL real)* |
+| **Data Warehouse** | Neon (PostgreSQL en la nube) | conexión privada vía secret `DATABASE_URL` |
+
+### Cómo está montado
+- El **dashboard** (Streamlit Cloud) lee **en vivo** las tablas y vistas del **DW en Neon**
+  mediante el secret `DATABASE_URL` — no usa archivos CSV.
+- El código soporta tanto la nube (`st.secrets` / `DATABASE_URL`) como el modo local.
+
+### Reproducir el despliegue
+1. **Base de datos (Neon):** crear un proyecto en [neon.tech](https://neon.tech), copiar la
+   *connection string* y cargar el DW:
+   ```bash
+   DATABASE_URL="postgresql://usuario:clave@ep-xxxx.aws.neon.tech/neondb?sslmode=require" \
+     python warehouse/cargar_nube.py
+   ```
+2. **Dashboard (Streamlit Cloud):** en [share.streamlit.io](https://share.streamlit.io),
+   desplegar `dashboard/app.py` desde el repo y poner en *Secrets*:
+   ```toml
+   DATABASE_URL = "postgresql://usuario:clave@ep-xxxx.aws.neon.tech/neondb?sslmode=require"
+   ```
+
+---
+
 ## 1. Lógica de negocio
 
 > Para un mismo producto (ej. *AMD Ryzen 9 9950X3D*), ¿en qué tienda
