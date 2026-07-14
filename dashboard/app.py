@@ -36,18 +36,33 @@ PANEL_GRID = "#E1E8EF"   # líneas de la cuadrícula
 # Columnas que SIEMPRE debe tener la base (evita KeyError si el filtro deja 0 filas)
 COLS_BASE = ["categoria", "marca", "clave_canonica", "identificado", "nombre_tienda", "precio_usd"]
 
+def _cfg(clave, defecto):
+    """Config desde st.secrets (Streamlit Cloud) -> variable de entorno -> local."""
+    try:
+        if clave in st.secrets:
+            return st.secrets[clave]
+    except Exception:
+        pass
+    return os.environ.get(clave, defecto)
+
+
 PG = {
-    "host": os.environ.get("PG_HOST", "localhost"),
-    "port": os.environ.get("PG_PORT", "5433"),
-    "db":   os.environ.get("PG_DB",   "bi_hardware"),
-    "user": os.environ.get("PG_USER", "bi_user"),
-    "pass": os.environ.get("PG_PASS", "bi_pass_2026"),
+    "host": _cfg("PG_HOST", "localhost"),
+    "port": _cfg("PG_PORT", "5433"),
+    "db":   _cfg("PG_DB",   "bi_hardware"),
+    "user": _cfg("PG_USER", "bi_user"),
+    "pass": _cfg("PG_PASS", "bi_pass_2026"),
 }
 
 
 @st.cache_resource
 def get_engine():
-    url = f"postgresql+psycopg2://{PG['user']}:{PG['pass']}@{PG['host']}:{PG['port']}/{PG['db']}"
+    # Si hay DATABASE_URL (ej. Neon en la nube) se usa directamente; si no, local.
+    url = str(_cfg("DATABASE_URL", ""))
+    if url:
+        url = url.replace("postgresql://", "postgresql+psycopg2://").replace("postgres://", "postgresql+psycopg2://")
+    else:
+        url = f"postgresql+psycopg2://{PG['user']}:{PG['pass']}@{PG['host']}:{PG['port']}/{PG['db']}"
     return create_engine(url, pool_pre_ping=True)
 
 
