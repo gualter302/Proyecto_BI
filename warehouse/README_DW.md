@@ -1,31 +1,16 @@
-# Data Warehouse — Entregable 4 (Comparador de Hardware Ecuador)
+# Data Warehouse — Comparador de Hardware Ecuador (E4)
 
 Data Warehouse en **PostgreSQL 16** (esquema estrella, fiel al diseño del E2),
 cargado **exclusivamente desde la zona Staging del E3** (no desde Raw).
 
-> **Guía rápida para el docente:** si solo quiere revisar la base de datos sin
-> ejecutar el pipeline, vaya directo al **Paso 1** + **Paso 2 (Opción B: restaurar
-> el dump)** + **Paso 3 (ver la base de datos)**. Toma ~3 minutos.
+> 📌 **Instalación y arranque** (Docker, cargar datos, restaurar el dump): ver el
+> **[README principal](../README.md)** — sección "Instalación y ejecución".
+> Este documento cubre solo lo específico del DW: **credenciales, cómo
+> consultarlo y sus archivos.**
 
 ---
 
-## Requisitos
-- **Docker Desktop** (para el motor PostgreSQL).
-- **Python 3.11+** con `pip install psycopg2-binary pandas` (solo si va a re-cargar
-  desde Staging; no hace falta si restaura el dump).
-
----
-
-## Paso 1 — Levantar el motor PostgreSQL 16 (Docker)
-
-```bash
-docker run -d --name bi_hardware_dw \
-  -e POSTGRES_USER=bi_user -e POSTGRES_PASSWORD=bi_pass_2026 \
-  -e POSTGRES_DB=bi_hardware -p 5433:5432 \
-  -v bi_hardware_pgdata:/var/lib/postgresql/data postgres:16
-```
-
-**Credenciales de conexión:**
+## Credenciales de conexión
 
 | Parámetro | Valor |
 |---|---|
@@ -37,48 +22,25 @@ docker run -d --name bi_hardware_dw \
 
 ---
 
-## Paso 2 — Cargar los datos (elija UNA opción)
-
-**Opción A — Ejecutar el ETL desde Staging (reproducible):**
-```bash
-pip install psycopg2-binary pandas
-python warehouse/02_cargar_dw.py          # crea el esquema y carga desde Staging
-python warehouse/05_reporte_analitico.py  # crea las vistas KPI y muestra resultados
-```
-
-**Opción B — Restaurar el dump (lo más rápido, sin pipeline):**
-```bash
-docker exec -i bi_hardware_dw psql -U bi_user -d bi_hardware < warehouse/dump_bi_hardware.sql
-```
-
----
-
-## Paso 3 — VER / CONSULTAR la base de datos
+## Cómo VER / CONSULTAR la base de datos
 
 ### Opción 1 — Desde la terminal (sin instalar nada más)
-Abrir una consola SQL dentro del contenedor:
 ```bash
 docker exec -it bi_hardware_dw psql -U bi_user -d bi_hardware
 ```
-Ya dentro (`bi_hardware=#`), algunos comandos útiles:
+Ya dentro (`bi_hardware=#`):
 ```sql
-\dt                       -- listar tablas
-\dv                       -- listar vistas (los KPIs)
-SELECT COUNT(*) FROM fact_precios;              -- 940 hechos
-SELECT * FROM vw_kpi_menor_precio_modelo LIMIT 10;   -- KPI: tienda más barata por modelo
-\q                        -- salir
-```
-
-O ejecutar todo el archivo de consultas analíticas de una vez:
-```bash
-docker exec -i bi_hardware_dw psql -U bi_user -d bi_hardware -f - < warehouse/03_consultas_analiticas.sql
+\dt                                             -- listar tablas
+\dv                                             -- listar vistas (los KPIs)
+SELECT COUNT(*) FROM fact_precios;              -- tabla de hechos
+SELECT * FROM vw_kpi_menor_precio_modelo LIMIT 10;
+\q                                              -- salir
 ```
 
 ### Opción 2 — Con una herramienta gráfica (recomendado para explorar)
-Instalar **DBeaver** (gratis) o **pgAdmin**, crear una conexión PostgreSQL con las
-credenciales de arriba (host `localhost`, puerto `5433`, base `bi_hardware`,
-usuario `bi_user`, contraseña `bi_pass_2026`) y navegar las tablas/vistas
-visualmente. También sirve la extensión **PostgreSQL** de VS Code.
+Instalar **DBeaver** o **pgAdmin**, crear una conexión PostgreSQL con las
+credenciales de arriba y navegar las tablas/vistas visualmente. También sirve
+la extensión **PostgreSQL** de VS Code.
 
 ### Consultas de ejemplo (responden las preguntas del E1)
 ```sql
@@ -108,17 +70,8 @@ FROM vw_kpi_outliers ORDER BY precio_usd DESC;
 | `03_consultas_analiticas.sql` | Una consulta por pregunta de investigación del E1 |
 | `04_kpis.sql` | 7 vistas de KPIs nativas (incluye detección de outliers IQR) |
 | `05_reporte_analitico.py` | Ejecuta KPIs y consultas, muestra resultados reales |
+| `06_cargar_tasas.py` | Carga la serie temporal de tasas (para el dashboard) |
 | `dump_bi_hardware.sql` | Dump ejecutable completo del DW (esquema + datos + vistas) |
-
-## Registros cargados
-
-| Tabla | Registros |
-|---|---|
-| fact_precios | 940 |
-| dim_producto | 794 |
-| dim_tiempo | 365 |
-| dim_fuente | 9 |
-| dim_tienda | 6 |
 
 ---
 
