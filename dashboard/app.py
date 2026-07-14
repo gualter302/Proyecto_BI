@@ -168,6 +168,9 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
     border: 1px solid #E5EBF1;
 }
 h1 { font-weight: 800; color: #12314A; }
+
+/* (Las animaciones se inyectan más abajo, con un nombre que cambia por vista
+   para que se repitan cada vez que se navega entre vistas.) */
 </style>
 """, unsafe_allow_html=True)
 
@@ -209,6 +212,56 @@ with st.sidebar:
 
 if not cats_sel: cats_sel = cats_all
 if not tiendas_sel: tiendas_sel = tiendas_all
+
+# ── ANIMACIONES ──────────────────────────────────────────────
+# El nombre de la animación cambia con la vista (k). Al navegar, el navegador
+# ve una animación "nueva" y la vuelve a ejecutar -> se re-anima cada vista.
+k = VISTAS.index(vista)
+st.markdown(f"""
+<style>
+@keyframes aparecer{k} {{
+    from {{ opacity: 0; transform: translateY(16px); }}
+    to   {{ opacity: 1; transform: translateY(0); }}
+}}
+/* Las barras crecen desde 0 (escala horizontal desde el eje) */
+@keyframes crecerBarra{k} {{
+    from {{ transform: scaleX(0); }}
+    to   {{ transform: scaleX(1); }}
+}}
+
+h1 {{ animation: aparecer{k} .5s ease both; }}
+
+/* Tarjetas de KPI: entran escalonadas */
+div[data-testid="stMetric"] {{ animation: aparecer{k} .5s ease both; }}
+div[data-testid="stHorizontalBlock"] > div:nth-child(1) div[data-testid="stMetric"] {{ animation-delay: .05s; }}
+div[data-testid="stHorizontalBlock"] > div:nth-child(2) div[data-testid="stMetric"] {{ animation-delay: .12s; }}
+div[data-testid="stHorizontalBlock"] > div:nth-child(3) div[data-testid="stMetric"] {{ animation-delay: .19s; }}
+div[data-testid="stHorizontalBlock"] > div:nth-child(4) div[data-testid="stMetric"] {{ animation-delay: .26s; }}
+div[data-testid="stHorizontalBlock"] > div:nth-child(5) div[data-testid="stMetric"] {{ animation-delay: .33s; }}
+div[data-testid="stHorizontalBlock"] > div:nth-child(6) div[data-testid="stMetric"] {{ animation-delay: .40s; }}
+
+/* Paneles de gráficos: entran después de los KPIs */
+div[data-testid="stVerticalBlockBorderWrapper"] {{
+    animation: aparecer{k} .6s ease both;
+    animation-delay: .42s;
+}}
+
+/* Barras de Plotly: crecen desde el eje (barras horizontales) */
+g.barlayer path {{
+    transform-box: fill-box;
+    transform-origin: left center;
+    animation: crecerBarra{k} .9s cubic-bezier(.2,.75,.25,1) both;
+    animation-delay: .55s;
+}}
+
+/* Accesibilidad: sin movimiento para quien lo prefiera */
+@media (prefers-reduced-motion: reduce) {{
+    h1, div[data-testid="stMetric"],
+    div[data-testid="stVerticalBlockBorderWrapper"],
+    g.barlayer path {{ animation: none !important; }}
+}}
+</style>
+""", unsafe_allow_html=True)
 
 df = q_base(cats_sel, tiendas_sel, pmin, pmax)
 
