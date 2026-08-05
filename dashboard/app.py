@@ -4,11 +4,13 @@ app.py  —  Dashboard BI: Comparador de Precios de Hardware en Ecuador (E5).
 Lee EN VIVO desde el Data Warehouse PostgreSQL (NO desde CSV). Cumple:
   - 5+ KPIs estratégicos con valores reales.
   - 3 familias de gráficos: barras, dispersión (scatter) y serie temporal.
-  - Filtros reactivos por categoría, tienda y rango de precio.
-  - Multi-vista: menú de navegación lateral (3 vistas).
+  - Filtros reactivos por categoría, tienda, gama y rango de precio, que
+    restringen las TRES vistas por igual (incluida "Tendencias y calidad").
+  - Multi-vista en una sola pantalla: pastillas de navegación horizontales
+    arriba del contenido (sin panel lateral).
 
-Estilo ejecutivo: barra lateral oscura con menú + área clara con tarjetas y
-paneles blancos.  Ejecutar:  streamlit run dashboard/app.py
+Estilo ejecutivo: área clara con tarjetas y paneles blancos, navegación y
+filtros en una barra superior.  Ejecutar:  streamlit run dashboard/app.py
 
 Para editar: colores de la INTERFAZ -> .streamlit/config.toml
              colores de los GRÁFICOS -> variable PALETA (abajo)
@@ -117,6 +119,39 @@ def q_serie_tasas():
     return run_sql("SELECT fecha, moneda, tasa_usd FROM fact_tasa_cambio ORDER BY fecha")
 
 
+def q_cobertura(cats, tiendas, pmin, pmax):
+    """Cobertura de identificación por categoría, restringida a los filtros
+    activos. Se recalcula desde las tablas base (no desde la vista agregada
+    vw_kpi_cobertura) porque esa vista ya viene agrupada por categoría y no
+    se puede filtrar por tienda/precio después de agregada."""
+    sql = """
+        SELECT p.categoria,
+               ROUND(100.0 * SUM(CASE WHEN p.identificado THEN 1 ELSE 0 END)
+                     / COUNT(*), 1) AS cobertura_pct
+        FROM fact_precios f
+        JOIN dim_producto p ON f.id_producto = p.id_producto
+        JOIN dim_tienda   t ON f.id_tienda   = t.id_tienda
+        WHERE p.categoria = ANY(:cats) AND t.nombre_tienda = ANY(:tiendas)
+          AND f.precio_usd BETWEEN :pmin AND :pmax
+        GROUP BY p.categoria
+        ORDER BY cobertura_pct DESC
+    """
+    return run_sql(sql, {"cats": cats, "tiendas": tiendas, "pmin": pmin, "pmax": pmax})
+
+
+def q_outliers(cats, tiendas, pmin, pmax):
+    """Outliers (IQR) restringidos a los filtros activos."""
+    sql = """
+        SELECT categoria, clave_canonica, nombre_tienda, precio_usd
+        FROM vw_kpi_outliers
+        WHERE categoria = ANY(:cats) AND nombre_tienda = ANY(:tiendas)
+          AND precio_usd BETWEEN :pmin AND :pmax
+        ORDER BY precio_usd DESC
+        LIMIT 15
+    """
+    return run_sql(sql, {"cats": cats, "tiendas": tiendas, "pmin": pmin, "pmax": pmax})
+
+
 @st.cache_data(ttl=300)
 def q_gama_bounds():
     """Umbrales de gama por categoría: tercios de precio (33% y 66%)."""
@@ -151,35 +186,30 @@ def asignar_gama(df, bounds):
 # ─────────────────────────────────────────────────────────────
 # LAYOUT + ESTILO (CSS)
 # ─────────────────────────────────────────────────────────────
-st.set_page_config(page_title=TITULO, layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title=TITULO, layout="wide")
 
 st.markdown("""
 <style>
 /* Área principal gris claro */
 .stApp { background-color: #E9EDF2; }
 
-/* ---------- BARRA LATERAL OSCURA ---------- */
-section[data-testid="stSidebar"] { background-color: #15232F; }
-section[data-testid="stSidebar"] * { color: #DCE6EF; }
+/* ---------- NAVEGACIÓN SUPERIOR (pastillas horizontales, sin panel lateral) ---------- */
+div[role="radiogroup"] { gap: 8px; flex-wrap: wrap; }
+div[role="radiogroup"] label {
+    background: #FFFFFF; border-radius: 999px; padding: 8px 18px;
+    border: 1px solid #E5EBF1; cursor: pointer; transition: all .15s;
+    box-shadow: 0 1px 4px rgba(31,42,55,0.06);
+}
+div[role="radiogroup"] label:hover { border-color: #2E75B6; }
+div[role="radiogroup"] label > div:first-child { display: none; }
+div[role="radiogroup"] label div[data-testid="stMarkdownContainer"] p {
+    color: #5C6B7A; font-weight: 600; margin: 0;
+}
+div[role="radiogroup"] label:has(input:checked) { background: #2E75B6; border-color: #2E75B6; }
+div[role="radiogroup"] label:has(input:checked) div[data-testid="stMarkdownContainer"] p { color: #FFFFFF; }
 
-/* Menú de navegación (radio con apariencia de menú) */
-section[data-testid="stSidebar"] div[role="radiogroup"] { gap: 6px; }
-section[data-testid="stSidebar"] div[role="radiogroup"] label {
-    background: #1E3244; border-radius: 8px; padding: 11px 14px; width: 100%;
-    border: 1px solid transparent; cursor: pointer; transition: background .15s;
-}
-section[data-testid="stSidebar"] div[role="radiogroup"] label:hover { background: #26425A; }
-section[data-testid="stSidebar"] div[role="radiogroup"] label > div:first-child { display: none; }
-section[data-testid="stSidebar"] div[role="radiogroup"] label:has(input:checked) {
-    background: #2E75B6; font-weight: 700;
-}
-
-/* Desplegables legibles sobre la barra oscura */
-section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
-    background-color: #22384A !important; border-color: #33506A !important;
-}
-section[data-testid="stSidebar"] [data-baseweb="tag"] { background-color: #2E75B6 !important; }
-section[data-testid="stSidebar"] div[data-baseweb="select"] svg { fill: #DCE6EF; }
+/* ---------- BARRA DE FILTROS (tarjeta blanca compacta) ---------- */
+div[data-testid="stExpander"] { border-radius: 14px; border: 1px solid #E5EBF1; }
 
 /* ---------- TARJETAS DE KPI (blancas) ---------- */
 div[data-testid="stMetric"] {
@@ -237,31 +267,52 @@ if precio_max <= 0 or not cats_all:
     st.stop()
 
 # ─────────────────────────────────────────────────────────────
-# BARRA LATERAL: menú de navegación + filtros
+# ENCABEZADO
+# ─────────────────────────────────────────────────────────────
+st.title(TITULO)
+st.caption(SUBTITULO)
+
+# ─────────────────────────────────────────────────────────────
+# NAVEGACIÓN + FILTROS — barra superior, sin panel lateral.
+# Los filtros son GLOBALES: se aplican por igual a las tres vistas (incluida
+# "Tendencias y calidad", que antes ignoraba Categoría/Tienda/Precio).
 # ─────────────────────────────────────────────────────────────
 VISTAS = ["Resumen ejecutivo", "Comparador de precios", "Tendencias y calidad"]
+vista = st.radio("Navegación", VISTAS, horizontal=True, label_visibility="collapsed")
 
-with st.sidebar:
-    st.markdown("### HARDWARE · EC")
-    st.caption("Comparador de precios · BI")
-    st.divider()
-    vista = st.radio("Navegación", VISTAS, label_visibility="collapsed")
-    st.divider()
-    st.markdown("**Filtros**")
-    cats_sel = st.multiselect("Categoría", cats_all, default=[], placeholder="Todas")
-    tiendas_sel = st.multiselect("Tienda", tiendas_all, default=[], placeholder="Todas")
-    gama_sel = st.multiselect("Gama", ["Baja", "Media", "Alta"], default=[], placeholder="Todas")
-    # Paso proporcional al rango (~100 tramos) en vez de un fijo de 50 USD, que se
-    # sentía demasiado fino en catálogos baratos (Periférico) y demasiado grueso
-    # cuando el tope del slider se disparaba por un solo producto atípico.
-    paso = max(10.0, round(precio_max / 100, -1))
-    pmin, pmax = st.slider("Rango de precio (USD)", 0.0, precio_max,
-                           (0.0, precio_max), step=paso, format="$%.0f")
-    st.divider()
-    st.caption("Datos en vivo desde PostgreSQL (DW)")
+with st.expander("Filtros", expanded=True, icon=":material/tune:"):
+    f1, f2, f3, f4 = st.columns([1.2, 1.2, 1, 2.4])
+    with f1:
+        cats_sel = st.multiselect("Categoría", cats_all, default=[], placeholder="Todas")
+    with f2:
+        tiendas_sel = st.multiselect("Tienda", tiendas_all, default=[], placeholder="Todas")
+    with f3:
+        gama_sel = st.multiselect("Gama", ["Baja", "Media", "Alta"], default=[], placeholder="Todas")
+    with f4:
+        # Paso proporcional al rango (~100 tramos) en vez de un fijo de 50 USD,
+        # que se sentía demasiado fino en catálogos baratos (Periférico) y
+        # demasiado grueso cuando el tope se disparaba por un producto atípico.
+        paso = max(10.0, round(precio_max / 100, -1))
+        pmin, pmax = st.slider("Rango de precio (USD)", 0.0, precio_max,
+                               (0.0, precio_max), step=paso, format="$%.0f")
 
 if not cats_sel: cats_sel = cats_all
 if not tiendas_sel: tiendas_sel = tiendas_all
+
+# Confirmación visual de qué filtro está activo -- evita la duda de "¿de
+# verdad se aplicó?" cuando una categoría chica (Monitor, Periférico...)
+# de repente muestra pocos resultados.
+_activos = []
+if len(cats_sel) < len(cats_all):
+    _activos.append("Categoría: " + ", ".join(cats_sel))
+if len(tiendas_sel) < len(tiendas_all):
+    _activos.append("Tienda: " + ", ".join(tiendas_sel))
+if gama_sel:
+    _activos.append("Gama: " + ", ".join(gama_sel))
+if pmin > 0 or pmax < precio_max:
+    _activos.append(f"Precio: ${pmin:,.0f}–${pmax:,.0f}")
+st.caption("Filtrando por " + " · ".join(_activos) if _activos else
+           "Sin filtros activos — mostrando todo el catálogo")
 
 # ── ANIMACIONES ──────────────────────────────────────────────
 # El nombre de la animación cambia con la vista (k). Al navegar, el navegador
@@ -318,12 +369,6 @@ df = asignar_gama(df, q_gama_bounds())
 if gama_sel:
     df = df[df["gama"].isin(gama_sel)]
 
-# ─────────────────────────────────────────────────────────────
-# ENCABEZADO
-# ─────────────────────────────────────────────────────────────
-st.title(TITULO)
-st.caption(SUBTITULO)
-
 if df.empty:
     st.warning("No hay datos con los filtros seleccionados. Amplía el rango de precio "
                "o incluye más categorías/tiendas.")
@@ -377,7 +422,7 @@ elif vista == VISTAS[1]:
     st.subheader("¿En qué tienda está más barato cada modelo?")
     df_id = df[df["identificado"] == True].copy()
     if df_id.empty:
-        st.info("No hay modelos identificados (CPU/GPU) con los filtros actuales.")
+        st.info("No hay modelos identificados con los filtros actuales.")
     else:
         resumen = (df_id.groupby(["clave_canonica", "categoria"])
                    .agg(precio_min=("precio_usd", "min"),
@@ -419,6 +464,7 @@ elif vista == VISTAS[1]:
 else:
     with st.container(border=True):
         st.markdown("**Serie temporal — Tasas de cambio de referencia (USD →)**")
+        st.caption("Referencia internacional, no depende de los filtros de categoría/tienda.")
         try:
             tasas = q_serie_tasas()
             if tasas.empty:
@@ -431,18 +477,34 @@ else:
         except Exception:
             st.info("Tabla fact_tasa_cambio no encontrada. Ejecuta warehouse/06_cargar_tasas.py.")
 
+    # OJO: antes estos dos paneles corrían SQL sin filtrar (siempre mostraban
+    # las 6 categorías/todas las tiendas sin importar lo elegido arriba). Por
+    # eso al filtrar por Monitor/Periférico "no pasaba nada" en esta pestaña:
+    # el filtro sí se aplicaba, pero estos dos gráficos lo ignoraban por
+    # completo. Ahora usan los mismos cats_sel/tiendas_sel/pmin/pmax que el
+    # resto del dashboard (la Gama no aplica aquí: se calcula en el motor de
+    # base de datos, no sobre el DataFrame ya clasificado en gamas).
     colA, colB = st.columns(2)
     with colA:
         with st.container(border=True):
             st.markdown("**Cobertura de identificación por categoría**")
-            cob = run_sql("SELECT categoria, cobertura_pct FROM vw_kpi_cobertura ORDER BY cobertura_pct DESC")
-            fig = px.bar(cob, x="cobertura_pct", y="categoria", orientation="h",
-                         color_discrete_sequence=PALETA, text_auto=".1f")
-            fig.update_layout(showlegend=False, xaxis_title="% identificado", yaxis_title="")
-            st.plotly_chart(estilizar(fig, alto=400), use_container_width=True)
+            cob = q_cobertura(cats_sel, tiendas_sel, pmin, pmax)
+            if cob.empty:
+                st.info("No hay ofertas con los filtros actuales.")
+            else:
+                fig = px.bar(cob, x="cobertura_pct", y="categoria", orientation="h",
+                             color_discrete_sequence=PALETA, text_auto=".1f")
+                fig.update_layout(showlegend=False, xaxis_title="% identificado", yaxis_title="",
+                                  xaxis_range=[0, 100])
+                st.plotly_chart(estilizar(fig, alto=400), use_container_width=True)
     with colB:
         with st.container(border=True):
             st.markdown("**Outliers detectados (IQR)** — precios atípicos")
-            out = run_sql("""SELECT categoria, clave_canonica, nombre_tienda, precio_usd
-                             FROM vw_kpi_outliers ORDER BY precio_usd DESC LIMIT 15""")
-            st.dataframe(out, use_container_width=True, height=400, hide_index=True)
+            out = q_outliers(cats_sel, tiendas_sel, pmin, pmax)
+            if out.empty:
+                st.info("No se detectaron outliers con los filtros actuales.")
+            else:
+                st.dataframe(out, use_container_width=True, height=400, hide_index=True)
+
+st.divider()
+st.caption("HARDWARE · EC — Comparador de precios · BI · Datos en vivo desde PostgreSQL (DW)")
