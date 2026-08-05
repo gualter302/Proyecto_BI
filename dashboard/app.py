@@ -116,6 +116,37 @@ def q_serie_tasas():
     return run_sql("SELECT fecha, moneda, tasa_usd FROM fact_tasa_cambio ORDER BY fecha")
 
 
+@st.cache_data(ttl=300)
+def q_gama_bounds():
+    """Umbrales de gama por categoría: tercios de precio (33% y 66%)."""
+    return run_sql("""
+        SELECT categoria,
+               PERCENTILE_CONT(0.33) WITHIN GROUP (ORDER BY precio_usd) AS q33,
+               PERCENTILE_CONT(0.66) WITHIN GROUP (ORDER BY precio_usd) AS q66
+        FROM vw_precios_validos
+        GROUP BY categoria
+    """)
+
+
+def asignar_gama(df, bounds):
+    """Clasifica cada oferta en Baja / Media / Alta según su precio dentro de su categoría."""
+    if df.empty:
+        return df.assign(gama=pd.Series(dtype="object"))
+    b = bounds.set_index("categoria")
+
+    def clasificar(r):
+        if r["categoria"] not in b.index:
+            return "Media"
+        lim = b.loc[r["categoria"]]
+        if r["precio_usd"] <= lim["q33"]:
+            return "Baja"
+        if r["precio_usd"] <= lim["q66"]:
+            return "Media"
+        return "Alta"
+
+    return df.assign(gama=df.apply(clasificar, axis=1))
+
+
 # ─────────────────────────────────────────────────────────────
 # LAYOUT + ESTILO (CSS)
 # ─────────────────────────────────────────────────────────────
@@ -205,6 +236,7 @@ with st.sidebar:
     st.markdown("**Filtros**")
     cats_sel = st.multiselect("Categoría", cats_all, default=[], placeholder="Todas")
     tiendas_sel = st.multiselect("Tienda", tiendas_all, default=[], placeholder="Todas")
+    gama_sel = st.multiselect("Gama", ["Baja", "Media", "Alta"], default=[], placeholder="Todas")
     pmin, pmax = st.slider("Rango de precio (USD)", 0.0, precio_max,
                            (0.0, precio_max), step=50.0)
     st.divider()
@@ -264,6 +296,9 @@ g.barlayer path {{
 """, unsafe_allow_html=True)
 
 df = q_base(cats_sel, tiendas_sel, pmin, pmax)
+df = asignar_gama(df, q_gama_bounds())
+if gama_sel:
+    df = df[df["gama"].isin(gama_sel)]
 
 # ─────────────────────────────────────────────────────────────
 # ENCABEZADO
