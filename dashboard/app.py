@@ -241,26 +241,20 @@ h1 { font-weight: 800; color: #12314A; }
 # ─────────────────────────────────────────────────────────────
 try:
     cats_all, tiendas_all = q_dimensiones()
-    rango = run_sql("""
-        SELECT MIN(precio_usd) lo, MAX(precio_usd) hi,
-               PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY precio_usd) AS p99
-        FROM fact_precios
-    """).iloc[0]
+    rango = run_sql("SELECT MIN(precio_usd) lo, MAX(precio_usd) hi FROM fact_precios").iloc[0]
 except Exception as e:
     st.error(f"No se pudo conectar al Data Warehouse.\n\n{e}")
     st.stop()
 
 # El DW podría estar vacío (MIN/MAX devuelven NULL) -> validar antes del slider.
-# El tope del slider se limita a 3x el percentil 99 (con piso de 500 USD): así un
-# solo listado mal categorizado (ej. una "PC armada" que se filtró como componente
-# suelto a 20.000 USD) no vuelve inutilizable el slider para el resto de productos,
-# sin recortar la gama alta real (ej. una GPU flagship de ~7.000 USD cabe holgado
-# dentro de 3x el percentil 99).
+# El tope del slider es el precio real más alto que existe en el catálogo
+# (redondeado hacia arriba a la centena, solo para que el número quede parejo).
+# Si aparece un tope que no corresponde a ningún producto real, el problema está
+# en el dato de origen (ver scripts_staging/stg_main.py, filtro de relevancia),
+# no en este slider -- corregirlo ahí, no acá.
 precio_max = 0.0
 if pd.notna(rango.hi):
-    tope = float(rango.p99) * 3 if pd.notna(rango.p99) and rango.p99 > 0 else float(rango.hi)
-    precio_max = min(float(rango.hi), max(tope, 500.0))
-    precio_max = float(math.ceil(precio_max / 100) * 100)  # redondea a la centena para un tope prolijo
+    precio_max = float(math.ceil(float(rango.hi) / 100) * 100)
 if precio_max <= 0 or not cats_all:
     st.warning("El Data Warehouse no tiene datos cargados. Carga el DW antes de usar el "
                "dashboard (ver el README principal o ejecuta `python iniciar.py`).")
@@ -289,12 +283,21 @@ with st.expander("Filtros", expanded=True, icon=":material/tune:"):
     with f3:
         gama_sel = st.multiselect("Gama", ["Baja", "Media", "Alta"], default=[], placeholder="Todas")
     with f4:
-        # Paso proporcional al rango (~100 tramos) en vez de un fijo de 50 USD,
-        # que se sentía demasiado fino en catálogos baratos (Periférico) y
-        # demasiado grueso cuando el tope se disparaba por un producto atípico.
-        paso = max(10.0, round(precio_max / 100, -1))
-        pmin, pmax = st.slider("Rango de precio (USD)", 0.0, precio_max,
-                               (0.0, precio_max), step=paso, format="$%.0f")
+        # Dos campos numéricos en vez de un slider de doble manija: arrastrar dos
+        # controles superpuestos en un rango de hasta $7.000 es incómodo y poco
+        # preciso. Escribir el mínimo/máximo exacto es más rápido y no tiene el
+        # problema de "las dos manijas quedan pegadas" en los extremos.
+        st.caption("Rango de precio (USD)")
+        fp1, fp2 = st.columns(2)
+        with fp1:
+            pmin = st.number_input("Mínimo", min_value=0.0, max_value=precio_max,
+                                   value=0.0, step=10.0, format="%.0f")
+        with fp2:
+            pmax = st.number_input("Máximo", min_value=0.0, max_value=precio_max,
+                                   value=precio_max, step=10.0, format="%.0f")
+        if pmin > pmax:
+            st.caption(":red[El mínimo no puede ser mayor que el máximo — se ignora el filtro de precio.]")
+            pmin, pmax = 0.0, precio_max
 
 if not cats_sel: cats_sel = cats_all
 if not tiendas_sel: tiendas_sel = tiendas_all
@@ -310,7 +313,9 @@ if len(tiendas_sel) < len(tiendas_all):
 if gama_sel:
     _activos.append("Gama: " + ", ".join(gama_sel))
 if pmin > 0 or pmax < precio_max:
-    _activos.append(f"Precio: ${pmin:,.0f}–${pmax:,.0f}")
+    # OJO: st.caption() renderiza markdown, y "$...$" dispara modo matemático
+    # (LaTeX) -- por eso el rango se arma sin el símbolo "$" pegado al número.
+    _activos.append(f"Precio: USD {pmin:,.0f}–{pmax:,.0f}")
 st.caption("Filtrando por " + " · ".join(_activos) if _activos else
            "Sin filtros activos — mostrando todo el catálogo")
 
