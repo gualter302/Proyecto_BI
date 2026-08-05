@@ -86,8 +86,9 @@ def procesar_precios():
     BUNDLES = (r"pc\s*gamer|pc\s*gaming|computador|computadora|torre\s*gamer|barebone|"
                r"all[\s-]*in[\s-]*one|equipo\s*gamer|cpu\s*gamer|"
                r"\bmainboard\b|\bmotherboard\b|\bmini\s*pc\b|\bnuc\b|\bcubi\b|\bnas\b|"
-               r"pc\s*desktop|torre\s*cpu|cpu[\s/]*torre|pc[\s/]*torre")
-    EQUIPOS_INICIO = r"^(laptop|notebook|port[aá]til|tablet|workstation|estaci[oó]n\s*de\s*trabajo|case)\b"
+               r"pc\s*desktop|torre\s*cpu|cpu[\s/]*torre|pc[\s/]*torre|"
+               r"\bworkstation\b|estaci[oó]n\s*de\s*trabajo")
+    EQUIPOS_INICIO = r"^(laptop|notebook|port[aá]til|tablet|case)\b"
     ACC_INICIO = (r"^(cooler(?!\s*master)|disipador|ventilador|pasta\s|silla|escritorio|funda|"
                   r"estuche|mochila|bandolera|malet[ií]n|cargador|adaptador\b|cable|mousepad|"
                   r"mouse\s*pad|barra\s+de\s+luz|l[aá]mpara|c[aá]mara)")
@@ -113,7 +114,7 @@ def procesar_precios():
         prod.str.contains(r"^procesador\b", regex=True, na=False)
     # Laptops/prebuilts con nomenclatura libre (sin "pc gamer" ni similares) que
     # mencionan CPU + GPU juntos, o CPU + RAM + SSD juntos, en el mismo titulo.
-    CPU_TOKEN = r"ryzen\s*\d|core\s*i[3579]|core\s*\d|i[3579][- ]?\d{4,5}|\bathlon\b|core\s*ultra"
+    CPU_TOKEN = r"ryzen\s*\d|core\s*i[3579]|core\s*\d|i[3579][- ]?\d{4,5}|\bathlon\b|core\s*ultra|threadripper"
     GPU_TOKEN = r"rtx\s*\d{3,4}|gtx\s*\d{3,4}|\brx\s*\d{3,4}"
     menciona_cpu = prod.str.contains(CPU_TOKEN, regex=True, na=False)
     menciona_gpu = prod.str.contains(GPU_TOKEN, regex=True, na=False)
