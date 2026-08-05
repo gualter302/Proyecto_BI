@@ -1,5 +1,5 @@
 {
-  "fecha_ejecucion": "2026-08-04 21:15:56",
+  "fecha_ejecucion": "2026-08-05 14:08:38",
   "control_3_1_duplicados": {
     "criterio": "tienda + categoria + clave_canonica + precio_usd",
     "estrategia": "conservar el registro mas completo",

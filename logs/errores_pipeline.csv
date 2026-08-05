@@ -17,3 +17,6 @@ timestamp,fuente,tipo_error,descripcion,accion_tomada
 2026-08-04 18:54:57,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
 2026-08-04 21:15:55,Staging:relevancia,Fuera de alcance,"341 no-componentes (equipos completos, TV/celulares, repuestos de laptop, accesorios) en categorias de componentes",Descartados: no son el componente individual a comparar
 2026-08-04 21:15:56,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
+2026-08-05 14:06:32,Staging:relevancia,Fuera de alcance,"341 no-componentes (equipos completos, TV/celulares, repuestos de laptop, accesorios) en categorias de componentes",Descartados: no son el componente individual a comparar
+2026-08-05 14:08:38,Staging:relevancia,Fuera de alcance,"341 no-componentes (equipos completos, TV/celulares, repuestos de laptop, accesorios) en categorias de componentes",Descartados: no son el componente individual a comparar
+2026-08-05 14:08:38,Staging:encuesta,Nulo,"presupuesto nulos=6, ciudad nulos=4",presupuesto imputado por mediana del componente; ciudad -> 'No especificada'
