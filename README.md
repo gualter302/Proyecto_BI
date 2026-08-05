@@ -175,18 +175,19 @@ orquestados por `stg_main.py`. Métricas exactas en `logs/reporte_calidad.json`.
 6. **Registro de errores** — bitácora persistente `logs/errores_pipeline.csv` con `timestamp | fuente | tipo | descripción | acción`.
 7. **Reporte de métricas** — consolidado estadístico exacto (ver abajo).
 
-### Reporte final de métricas (ejecución 2026-06-30)
+### Reporte final de métricas (ejecución 2026-08-04)
 
 | Métrica | Valor |
 |---|---|
 | Registros crudos procesados (Raw) | 1.388 |
-| Registros aptos para Warehouse (Staging) | 940 |
-| No-componentes descartados (relevancia) | 80 |
-| Registros depurados por duplicados | 363 |
-| Registros eliminados por nulos críticos | 5 |
+| Registros aptos para Warehouse (Staging) | 933 |
+| No-componentes descartados (relevancia) | 338 |
+| Registros depurados por duplicados | 114 |
+| Registros eliminados por nulos críticos | 3 |
 | Tasa de completitud general | 100 % |
-| Tasa de error (Raw→Staging) | 32,28 % |
-| Productos comparables en 2+ tiendas | 41 |
+| Tasa de error (Raw→Staging) | 32,78 % |
+| Cobertura de clave canónica (las 6 categorías) | 79,53 % |
+| Productos comparables en 2+ tiendas | 99 |
 
 ---
 
@@ -229,12 +230,15 @@ Verificación de scrapeabilidad de tiendas (diagnóstico):
 
 ---
 
-## 7. Limitaciones conocidas (mejoras para E4)
+## 7. Limitaciones conocidas
 
-- La **clave canónica** se genera de forma confiable solo para **CPU y GPU**
-  (modelos con número). RAM/SSD/Monitor/Periférico tienen títulos demasiado
-  heterogéneos y quedan como `sin_clasificar` (no se comparan para evitar
-  falsos emparejamientos). Cobertura actual ≈ 30 %.
+- La **clave canónica** se genera por regex/heurísticas de marca+especificación
+  para las 6 categorías (CPU/GPU por número de modelo; RAM/SSD por marca+
+  capacidad+especificación; Monitor/Periférico por marca+código de modelo).
+  Cobertura actual ≈ 80 % del staging. Lo que no se identifica con confianza
+  queda como `sin_clasificar` y no se compara, para evitar falsos
+  emparejamientos (ej. dos periféricos distintos de la misma marca sin código
+  de modelo detectable).
 - El precio **máximo** del comparador puede incluir listados atípicos (PC armada
   premium no capturada por el filtro de bundles). El precio **mínimo** y la
   **tienda más barata** —el dato de negocio— son robustos.
