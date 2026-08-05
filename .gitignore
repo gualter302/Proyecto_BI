@@ -18,5 +18,8 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Secretos locales (credenciales de BD para pruebas, nunca al repo)
+.streamlit/secrets.toml
+
 # Documentos Word (se guardan en C:\UPSE\6to Semestre\Inteligencia_Negocios)
 *.docx

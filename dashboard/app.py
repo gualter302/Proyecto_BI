@@ -13,6 +13,7 @@ paneles blancos.  Ejecutar:  streamlit run dashboard/app.py
 Para editar: colores de la INTERFAZ -> .streamlit/config.toml
              colores de los GRÁFICOS -> variable PALETA (abajo)
 """
+import math
 import os
 import pandas as pd
 import plotly.express as px
@@ -116,6 +117,37 @@ def q_serie_tasas():
     return run_sql("SELECT fecha, moneda, tasa_usd FROM fact_tasa_cambio ORDER BY fecha")
 
 
+@st.cache_data(ttl=300)
+def q_gama_bounds():
+    """Umbrales de gama por categoría: tercios de precio (33% y 66%)."""
+    return run_sql("""
+        SELECT categoria,
+               PERCENTILE_CONT(0.33) WITHIN GROUP (ORDER BY precio_usd) AS q33,
+               PERCENTILE_CONT(0.66) WITHIN GROUP (ORDER BY precio_usd) AS q66
+        FROM vw_precios_validos
+        GROUP BY categoria
+    """)
+
+
+def asignar_gama(df, bounds):
+    """Clasifica cada oferta en Baja / Media / Alta según su precio dentro de su categoría."""
+    if df.empty:
+        return df.assign(gama=pd.Series(dtype="object"))
+    b = bounds.set_index("categoria")
+
+    def clasificar(r):
+        if r["categoria"] not in b.index:
+            return "Media"
+        lim = b.loc[r["categoria"]]
+        if r["precio_usd"] <= lim["q33"]:
+            return "Baja"
+        if r["precio_usd"] <= lim["q66"]:
+            return "Media"
+        return "Alta"
+
+    return df.assign(gama=df.apply(clasificar, axis=1))
+
+
 # ─────────────────────────────────────────────────────────────
 # LAYOUT + ESTILO (CSS)
 # ─────────────────────────────────────────────────────────────
@@ -179,13 +211,26 @@ h1 { font-weight: 800; color: #12314A; }
 # ─────────────────────────────────────────────────────────────
 try:
     cats_all, tiendas_all = q_dimensiones()
-    rango = run_sql("SELECT MIN(precio_usd) lo, MAX(precio_usd) hi FROM fact_precios").iloc[0]
+    rango = run_sql("""
+        SELECT MIN(precio_usd) lo, MAX(precio_usd) hi,
+               PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY precio_usd) AS p99
+        FROM fact_precios
+    """).iloc[0]
 except Exception as e:
     st.error(f"No se pudo conectar al Data Warehouse.\n\n{e}")
     st.stop()
 
-# El DW podría estar vacío (MIN/MAX devuelven NULL) -> validar antes del slider
-precio_max = float(rango.hi) if pd.notna(rango.hi) else 0.0
+# El DW podría estar vacío (MIN/MAX devuelven NULL) -> validar antes del slider.
+# El tope del slider se limita a 3x el percentil 99 (con piso de 500 USD): así un
+# solo listado mal categorizado (ej. una "PC armada" que se filtró como componente
+# suelto a 20.000 USD) no vuelve inutilizable el slider para el resto de productos,
+# sin recortar la gama alta real (ej. una GPU flagship de ~7.000 USD cabe holgado
+# dentro de 3x el percentil 99).
+precio_max = 0.0
+if pd.notna(rango.hi):
+    tope = float(rango.p99) * 3 if pd.notna(rango.p99) and rango.p99 > 0 else float(rango.hi)
+    precio_max = min(float(rango.hi), max(tope, 500.0))
+    precio_max = float(math.ceil(precio_max / 100) * 100)  # redondea a la centena para un tope prolijo
 if precio_max <= 0 or not cats_all:
     st.warning("El Data Warehouse no tiene datos cargados. Carga el DW antes de usar el "
                "dashboard (ver el README principal o ejecuta `python iniciar.py`).")
@@ -205,8 +250,13 @@ with st.sidebar:
     st.markdown("**Filtros**")
     cats_sel = st.multiselect("Categoría", cats_all, default=[], placeholder="Todas")
     tiendas_sel = st.multiselect("Tienda", tiendas_all, default=[], placeholder="Todas")
+    gama_sel = st.multiselect("Gama", ["Baja", "Media", "Alta"], default=[], placeholder="Todas")
+    # Paso proporcional al rango (~100 tramos) en vez de un fijo de 50 USD, que se
+    # sentía demasiado fino en catálogos baratos (Periférico) y demasiado grueso
+    # cuando el tope del slider se disparaba por un solo producto atípico.
+    paso = max(10.0, round(precio_max / 100, -1))
     pmin, pmax = st.slider("Rango de precio (USD)", 0.0, precio_max,
-                           (0.0, precio_max), step=50.0)
+                           (0.0, precio_max), step=paso, format="$%.0f")
     st.divider()
     st.caption("Datos en vivo desde PostgreSQL (DW)")
 
@@ -264,6 +314,9 @@ g.barlayer path {{
 """, unsafe_allow_html=True)
 
 df = q_base(cats_sel, tiendas_sel, pmin, pmax)
+df = asignar_gama(df, q_gama_bounds())
+if gama_sel:
+    df = df[df["gama"].isin(gama_sel)]
 
 # ─────────────────────────────────────────────────────────────
 # ENCABEZADO
