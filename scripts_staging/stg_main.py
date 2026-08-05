@@ -110,8 +110,10 @@ def procesar_precios():
     es_repuesto = prod.str.contains(LAPTOP_REPUESTO, regex=True, na=False)
     # "Procesador ..." clasificado como RAM/SSD/Monitor/Periferico -> el buscador
     # lo trajo por error, no pertenece a esa categoria (en CPU SI es valido).
-    es_cpu_mal_categorizado = (df["categoria"].astype(str).str.upper() != "CPU") & \
-        prod.str.contains(r"^procesador\b", regex=True, na=False)
+    es_cpu_mal_categorizado = (
+        (df["categoria"].astype(str).str.upper() != "CPU")
+        & prod.str.contains(r"^procesador\b", regex=True, na=False)
+    )
     # Laptops/prebuilts con nomenclatura libre (sin "pc gamer" ni similares) que
     # mencionan CPU + GPU juntos, o CPU + RAM + SSD juntos, en el mismo titulo.
     CPU_TOKEN = r"ryzen\s*\d|core\s*i[3579]|core\s*\d|i[3579][- ]?\d{4,5}|\bathlon\b|core\s*ultra|threadripper"
