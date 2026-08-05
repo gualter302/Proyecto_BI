@@ -231,6 +231,18 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
 }
 h1 { font-weight: 800; color: #12314A; }
 
+/* ---------- RESPONSIVE (celular) ----------
+   Streamlit ya apila st.columns() solo en pantallas angostas (KPIs, filtros,
+   gráficos de a 1 por fila) -- eso no hace falta tocarlo. Lo que sí se ve mal
+   por defecto son las pastillas de navegación: en vez de ocuparse todo el
+   ancho, quedan chicas y pegadas a la izquierda con espacio vacío a la
+   derecha. Se corrige solo eso para celular. */
+@media (max-width: 640px) {
+    div[role="radiogroup"] label { flex: 1 1 100%; text-align: center; }
+    div[data-testid="stMetricValue"] { font-size: 1.6rem !important; }
+    .js-plotly-plot { max-width: 100%; }
+}
+
 /* (Las animaciones se inyectan más abajo, con un nombre que cambia por vista
    para que se repitan cada vez que se navega entre vistas.) */
 </style>
