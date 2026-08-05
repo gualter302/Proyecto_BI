@@ -74,30 +74,63 @@ def procesar_precios():
 
     # Filtro de relevancia: la busqueda por keyword arrastra elementos que NO son
     # el componente individual buscado y distorsionan la comparacion:
-    #   (a) equipos completos: PCs armadas, laptops, notebooks, tablets.
-    #   (b) accesorios: coolers, disipadores, mousepads, cables, barras de luz...
+    #   (a) equipos completos: PCs armadas, laptops, notebooks, tablets, mini PCs,
+    #       placas madre (el buscador las trae porque mencionan "procesador").
+    #   (b) accesorios: coolers, disipadores, mousepads, cables, barras de luz,
+    #       soportes/brazos de monitor, docks, teclados de repuesto de laptop.
+    #   (c) productos de otra categoria (TV, celulares, relojes) que mencionan
+    #       "RAM"/"monitor" en su ficha tecnica.
     # Los accesorios se detectan por como EMPIEZA el nombre o por frases
     # inequivocas, evitando falsos positivos (ej. un CPU real que "Incluye
     # Disipador" o una GPU con "2 ventiladores" SI se conservan).
     BUNDLES = (r"pc\s*gamer|pc\s*gaming|computador|computadora|torre\s*gamer|barebone|"
-               r"all[\s-]*in[\s-]*one|equipo\s*gamer|cpu\s*gamer")
-    EQUIPOS_INICIO = r"^(laptop|notebook|port[aá]til|tablet|workstation|estaci[oó]n\s*de\s*trabajo)\b"
+               r"all[\s-]*in[\s-]*one|equipo\s*gamer|cpu\s*gamer|"
+               r"\bmainboard\b|\bmotherboard\b|\bmini\s*pc\b|\bnuc\b|\bcubi\b|\bnas\b|"
+               r"pc\s*desktop|torre\s*cpu|cpu[\s/]*torre|pc[\s/]*torre")
+    EQUIPOS_INICIO = r"^(laptop|notebook|port[aá]til|tablet|workstation|estaci[oó]n\s*de\s*trabajo|case)\b"
     ACC_INICIO = (r"^(cooler(?!\s*master)|disipador|ventilador|pasta\s|silla|escritorio|funda|"
                   r"estuche|mochila|bandolera|malet[ií]n|cargador|adaptador\b|cable|mousepad|"
-                  r"mouse\s*pad|barra\s+de\s+luz|l[aá]mpara)")
+                  r"mouse\s*pad|barra\s+de\s+luz|l[aá]mpara|c[aá]mara)")
     ACC_FRASE = (r"barra\s+de\s+luz|mouse\s*pad|alfombrilla|cooler\s+kit|kit\s+de\s+limpieza|"
-                 r"kit\s+del\s+procesador|estuche\s+para|cable\s+extensi|pasta\s+t[eé]rmica")
+                 r"kit\s+del\s+procesador|estuche\s+para|cable\s+extensi|pasta\s+t[eé]rmica|"
+                 r"soporte\s*(de\s*pared|brazo|neumatico)|\bstand\b.*\bmonitor|docking\s*station|"
+                 r"simulador\s*racing|\bconvertidor\b|baby\s*monitor|monitor.*\bbebe\b|"
+                 r"pantalla\s*lcd.*argb|argb.*pantalla\s*lcd")
+    # Otra categoria (TV, celulares, smartwatches) que aparece por mencionar RAM/monitor.
+    TV_CELULAR = r"\btelevisor\b|smart\s*tv|\bcelular\b|\bsmartphone\b|\bsmartwatch\b"
+    # Teclados/mouse de REPUESTO para laptop (no son un periferico independiente).
+    LAPTOP_REPUESTO = (r"\b(ideapad|pavilion|pavillon|thinkpad|elitebook|probook|vivobook|"
+                       r"zenbook|chromebook|aspire|inspiron)\b|\bpalmrest\b|\btouchpad\b|"
+                       r"^repuesto\b")
     prod = df["producto"].astype(str).str.strip().str.lower()
     es_equipo = prod.str.contains(BUNDLES, regex=True, na=False) | prod.str.contains(EQUIPOS_INICIO, regex=True, na=False)
     es_acc    = prod.str.contains(ACC_INICIO, regex=True, na=False) | prod.str.contains(ACC_FRASE, regex=True, na=False)
-    es_irrel  = es_equipo | es_acc
+    es_otra_cat = prod.str.contains(TV_CELULAR, regex=True, na=False)
+    es_repuesto = prod.str.contains(LAPTOP_REPUESTO, regex=True, na=False)
+    # "Procesador ..." clasificado como RAM/SSD/Monitor/Periferico -> el buscador
+    # lo trajo por error, no pertenece a esa categoria (en CPU SI es valido).
+    es_cpu_mal_categorizado = (df["categoria"].astype(str).str.upper() != "CPU") & \
+        prod.str.contains(r"^procesador\b", regex=True, na=False)
+    # Laptops/prebuilts con nomenclatura libre (sin "pc gamer" ni similares) que
+    # mencionan CPU + GPU juntos, o CPU + RAM + SSD juntos, en el mismo titulo.
+    CPU_TOKEN = r"ryzen\s*\d|core\s*i[3579]|core\s*\d|i[3579][- ]?\d{4,5}|\bathlon\b|core\s*ultra"
+    GPU_TOKEN = r"rtx\s*\d{3,4}|gtx\s*\d{3,4}|\brx\s*\d{3,4}"
+    menciona_cpu = prod.str.contains(CPU_TOKEN, regex=True, na=False)
+    menciona_gpu = prod.str.contains(GPU_TOKEN, regex=True, na=False)
+    menciona_ram = prod.str.contains(r"\bram\b", regex=True, na=False)
+    menciona_ssd = prod.str.contains(r"\bssd\b", regex=True, na=False)
+    es_bundle_specs = menciona_cpu & ((menciona_gpu) | (menciona_ram & menciona_ssd))
+
+    es_irrel = (es_equipo | es_acc | es_otra_cat | es_repuesto |
+                es_cpu_mal_categorizado | es_bundle_specs)
     n_irr = int(es_irrel.sum())
     if n_irr:
         df = df[~es_irrel].copy()
         bitacora.registrar("Staging:relevancia", "Fuera de alcance",
-                           f"{n_irr} no-componentes (equipos completos, laptops, accesorios) en categorias de componentes",
+                           f"{n_irr} no-componentes (equipos completos, TV/celulares, repuestos de "
+                           "laptop, accesorios) en categorias de componentes",
                            "Descartados: no son el componente individual a comparar")
-    print(f"      No-componentes descartados (equipos/laptops/accesorios): {n_irr}")
+    print(f"      No-componentes descartados (equipos/laptops/accesorios/otra categoria): {n_irr}")
 
     print("[5] Formatos y casting de precios (string sucio -> float)...")
     casting = qc.control_casting(df)
