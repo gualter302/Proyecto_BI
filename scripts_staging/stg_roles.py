@@ -93,7 +93,11 @@ _SSD_MARCAS = ["adata", "xpg", "hiksemi", "kingston", "corsair", "crucial",
 
 
 def _clave_ssd(txt: str) -> str:
-    cap = re.search(r"\b(\d{1,4})\s*(gb|tb)\b", txt)
+    marca = next((m for m in _SSD_MARCAS if re.search(rf"\b{re.escape(m)}\b", txt)), None)
+    cap = re.search(r"\b(\d{2,4})\s*(gb|tb)\b", txt)
+    if not marca or not cap:
+        return "sin_clasificar"
+    partes = [marca.replace(" ", ""), f"{cap.group(1)}{cap.group(2)}"]
     if re.search(r"\bnvme\b|m\.2|\bm2\b", txt):
         partes.append("nvme")
     elif re.search(r"\bsata\b", txt):
