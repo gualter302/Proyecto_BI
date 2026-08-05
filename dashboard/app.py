@@ -468,16 +468,22 @@ elif vista == VISTAS[1]:
 # ═════════════════════ VISTA 3 — TENDENCIAS Y CALIDAD ═════════════════════
 else:
     with st.container(border=True):
-        st.markdown("**Serie temporal — Tasas de cambio de referencia (USD →)**")
-        st.caption("Referencia internacional, no depende de los filtros de categoría/tienda.")
+        st.markdown("**Serie temporal — Tasas de cambio de referencia (índice, primer día = 100)**")
+        st.caption("Referencia internacional, no depende de los filtros de categoría/tienda. "
+                   "Cada moneda parte de 100 en su primer día para comparar variación relativa "
+                   "sin que el yen (unidades ~160 por USD) aplaste en la escala a las demás "
+                   "(euro, libra... unidades <1-5 por USD).")
         try:
             tasas = q_serie_tasas()
             if tasas.empty:
                 st.info("Ejecuta warehouse/06_cargar_tasas.py para ver la serie temporal.")
             else:
-                fig = px.line(tasas, x="fecha", y="tasa_usd", color="moneda",
+                tasas = tasas.sort_values(["moneda", "fecha"])
+                primer_valor = tasas.groupby("moneda")["tasa_usd"].transform("first")
+                tasas["indice"] = tasas["tasa_usd"] / primer_valor * 100
+                fig = px.line(tasas, x="fecha", y="indice", color="moneda",
                               color_discrete_sequence=PALETA, markers=True)
-                fig.update_layout(xaxis_title="Fecha", yaxis_title="Unidades por 1 USD")
+                fig.update_layout(xaxis_title="Fecha", yaxis_title="Índice (100 = primer día)")
                 st.plotly_chart(estilizar(fig, alto=440), use_container_width=True)
         except Exception:
             st.info("Tabla fact_tasa_cambio no encontrada. Ejecuta warehouse/06_cargar_tasas.py.")
