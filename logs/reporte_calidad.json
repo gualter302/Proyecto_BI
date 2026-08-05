@@ -1,23 +1,23 @@
 {
-  "fecha_ejecucion": "2026-07-04 19:33:26",
+  "fecha_ejecucion": "2026-08-04 21:15:56",
   "control_3_1_duplicados": {
     "criterio": "tienda + categoria + clave_canonica + precio_usd",
     "estrategia": "conservar el registro mas completo",
-    "duplicados_eliminados": 327
+    "duplicados_eliminados": 114
   },
   "control_3_2_nulos": {
     "porcentaje_por_campo": {
       "tienda": 0.0,
       "categoria": 0.0,
       "producto": 0.0,
-      "precio_usd": 0.43
+      "precio_usd": 0.29
     },
     "matriz_resolucion": {
       "precio_usd": "Eliminacion del registro (sin precio no es comparable)",
       "encuesta.presupuesto_usd": "Imputacion con la mediana del componente",
       "encuesta.ciudad": "Reemplazo por 'No especificada'"
     },
-    "registros_eliminados_criticos": 5
+    "registros_eliminados_criticos": 3
   },
   "control_3_3_casting": {
     "ejemplos_antes_despues": [
@@ -30,7 +30,7 @@
       "'$980,00 El precio original era' -> 950.0",
       "'$590,00 El precio original era' -> 575.0"
     ],
-    "no_parseables": 5
+    "no_parseables": 3
   },
   "control_3_4_estandarizacion": {
     "categorias_no_estandar": []
@@ -57,28 +57,28 @@
   "control_3_6_bitacora": "logs/errores_pipeline.csv (persistente)",
   "control_3_7_metricas": {
     "total_registros_raw": 1388,
-    "total_registros_staging": 822,
-    "registros_depurados_duplicados": 327,
-    "registros_eliminados_nulos": 5,
+    "total_registros_staging": 930,
+    "registros_depurados_duplicados": 114,
+    "registros_eliminados_nulos": 3,
     "tasa_completitud_general_pct": 100.0,
-    "tasa_error_pct": 40.78
+    "tasa_error_pct": 33.0
   },
-  "cobertura_clave_canonica_pct": 31.14,
+  "cobertura_clave_canonica_pct": 79.68,
   "distribucion_por_tienda": {
-    "Tecnosmart": 341,
-    "NomadaWare": 124,
-    "TecnoGame": 124,
-    "MTEC": 110,
-    "Computron": 85,
-    "CompuGamer": 38
+    "Tecnosmart": 397,
+    "NomadaWare": 177,
+    "TecnoGame": 149,
+    "MTEC": 88,
+    "Computron": 79,
+    "CompuGamer": 40
   },
   "distribucion_por_categoria": {
-    "PERIFERICO": 210,
-    "MONITOR": 201,
-    "CPU": 175,
-    "GPU": 135,
-    "RAM": 81,
-    "SSD": 20
+    "PERIFERICO": 349,
+    "MONITOR": 208,
+    "CPU": 149,
+    "GPU": 121,
+    "RAM": 86,
+    "SSD": 17
   },
   "fuente_propia_encuesta": {
     "registros": 120,
