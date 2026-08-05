@@ -1,5 +1,5 @@
 {
-  "fecha_ejecucion": "2026-08-04 18:54:57",
+  "fecha_ejecucion": "2026-08-04 21:15:56",
   "control_3_1_duplicados": {
     "criterio": "tienda + categoria + clave_canonica + precio_usd",
     "estrategia": "conservar el registro mas completo",
@@ -57,15 +57,15 @@
   "control_3_6_bitacora": "logs/errores_pipeline.csv (persistente)",
   "control_3_7_metricas": {
     "total_registros_raw": 1388,
-    "total_registros_staging": 933,
+    "total_registros_staging": 930,
     "registros_depurados_duplicados": 114,
     "registros_eliminados_nulos": 3,
     "tasa_completitud_general_pct": 100.0,
-    "tasa_error_pct": 32.78
+    "tasa_error_pct": 33.0
   },
-  "cobertura_clave_canonica_pct": 79.53,
+  "cobertura_clave_canonica_pct": 79.68,
   "distribucion_por_tienda": {
-    "Tecnosmart": 400,
+    "Tecnosmart": 397,
     "NomadaWare": 177,
     "TecnoGame": 149,
     "MTEC": 88,
@@ -75,9 +75,9 @@
   "distribucion_por_categoria": {
     "PERIFERICO": 349,
     "MONITOR": 208,
-    "CPU": 150,
-    "GPU": 122,
-    "RAM": 87,
+    "CPU": 149,
+    "GPU": 121,
+    "RAM": 86,
     "SSD": 17
   },
   "fuente_propia_encuesta": {
